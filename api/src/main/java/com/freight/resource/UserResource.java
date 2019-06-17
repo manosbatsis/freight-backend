@@ -1,4 +1,4 @@
-package com.freight.resource.user;
+package com.freight.resource;
 
 import com.freight.auth.UserAuth;
 import com.freight.auth.UserScope;
@@ -18,7 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import static com.freight.exception.BadRequest.INVALID_COOKIE;
+import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 
 @Api(tags = {"user"})
 @Path("/user")
@@ -38,7 +38,7 @@ public class UserResource {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
-                    .orElseThrow(() -> new FreightException(INVALID_COOKIE));
+                    .orElseThrow(() -> new FreightException(USER_NOT_EXIST));
             return new UserView(user);
         }
     }

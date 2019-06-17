@@ -15,7 +15,7 @@ import static com.freight.model_view.TimeModelView.Unit.YEARS;
 /**
  * Created by toshikijahja on 3/26/19.
  */
-public class TimeUtils {
+public class TimeUtil {
 
     public static TimeModelView getTimePassed(final Instant created) {
         final Duration duration = Duration.between(created, Instant.now());

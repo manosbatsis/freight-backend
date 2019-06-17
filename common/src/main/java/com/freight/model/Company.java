@@ -16,7 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.Instant;
 
-import static com.freight.model.Company.Status.ACTIVE;
+import static com.freight.model.Company.Status.UNVERIFIED;
 import static com.freight.model.Company.Type.CUSTOMER;
 
 /**
@@ -55,8 +55,8 @@ public class Company {
     }
 
     public enum Status {
-        ACTIVE,
-        SUSPENDED
+        VERIFIED,
+        UNVERIFIED
     }
 
     public Company() {}
@@ -96,7 +96,7 @@ public class Company {
         private int id;
         private String name;
         private Type type = CUSTOMER;
-        private Status status = ACTIVE;
+        private Status status = UNVERIFIED;
 
         public Builder id(final int id) {
             this.id = id;

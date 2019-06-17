@@ -19,6 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.Instant;
 
+import static com.freight.model.Shipment.ShipStatus.DOCKING_ORIGIN;
+
 /**
  * Created by toshikijahja on 11/7/18.
  */
@@ -138,8 +140,8 @@ public class Shipment {
         private Port destinationPort;
         private Instant estimatedDeparture;
         private Instant estimatedArrival;
-        private Status status;
-        private ShipStatus shipStatus;
+        private Status status = Status.OPEN;
+        private ShipStatus shipStatus = DOCKING_ORIGIN;
 
         public Builder id(final int id) {
             this.id = id;

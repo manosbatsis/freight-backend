@@ -141,7 +141,7 @@ public class Port {
         private String province;
         private String postalCode;
         private String country;
-        private Status status;
+        private Status status = Status.ACTIVE;
 
         public Builder id(final int id) {
             this.id = id;

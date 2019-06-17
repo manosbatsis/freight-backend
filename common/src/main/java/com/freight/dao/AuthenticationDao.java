@@ -14,10 +14,14 @@ import java.util.Random;
 
 import static com.freight.auth.JWTUtil.createJWT;
 import static com.freight.exception.BadRequest.EMAIL_PHONE_EMPTY;
+import static com.freight.exception.BadRequest.GUID_NOT_EXIST;
+import static com.freight.exception.BadRequest.STATUS_NOT_EXIST;
+import static com.freight.exception.BadRequest.VERIFICATION_CODE_NOT_EXIST;
 import static com.freight.exception.BadRequest.VERIFICATION_CODE_WRONG;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
 import static com.freight.model.Authentication.Status.UNVERIFIED;
 import static com.freight.model.User.Type.NOT_KNOWN;
+import static com.freight.util.AssertUtil.assertNotNull;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static java.util.Objects.requireNonNull;
 import static org.mindrot.jbcrypt.BCrypt.hashpw;
@@ -94,9 +98,6 @@ public class AuthenticationDao extends BaseDao<Authentication> {
     public String authenticate(final Optional<String> emailOptional,
                                final Optional<Integer> phoneOptional,
                                final String password) {
-        requireNonNull(emailOptional);
-        requireNonNull(phoneOptional);
-        requireNonNull(password);
         final Optional<Authentication> authenticationOptional;
         if (emailOptional.isPresent()) {
             authenticationOptional = getByEmail(emailOptional.get());
@@ -106,7 +107,7 @@ public class AuthenticationDao extends BaseDao<Authentication> {
             throw new FreightException(EMAIL_PHONE_EMPTY);
         }
 
-        if (!authenticationOptional.isPresent()) {
+        if (!authenticationOptional.isPresent() || password == null) {
             throw new FreightException(UNAUTHORIZED);
         }
 
@@ -119,8 +120,8 @@ public class AuthenticationDao extends BaseDao<Authentication> {
     }
 
     public Authentication verifyCode(final String guid, final String verificationCode) {
-        requireNonNull(guid);
-        requireNonNull(verificationCode);
+        assertNotNull(guid, GUID_NOT_EXIST);
+        assertNotNull(verificationCode, VERIFICATION_CODE_NOT_EXIST);
         final Optional<Authentication> authenticationOptional = getByGuid(guid);
         if (!authenticationOptional.isPresent()) {
             throw new FreightException(UNAUTHORIZED);
@@ -135,7 +136,8 @@ public class AuthenticationDao extends BaseDao<Authentication> {
     }
 
     public void setStatus(final String guid, final Authentication.Status status) {
-        requireNonNull(guid);
+        assertNotNull(guid, GUID_NOT_EXIST);
+        assertNotNull(status, STATUS_NOT_EXIST);
         final Query query = getSessionProvider().getSession().createQuery(
                 "UPDATE " + clazz.getName() + " SET status = :status WHERE guid = :guid");
         query.setParameter("status", status);

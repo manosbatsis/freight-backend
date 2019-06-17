@@ -14,12 +14,19 @@ public class CompanyView extends BaseView {
         this.company = company;
     }
 
-    public String getName() {
-        return company.getName();
-    }
-
     public int getId() {
         return company.getId();
     }
 
+    public String getName() {
+        return company.getName();
+    }
+
+    public Company.Type getType() {
+        return company.getType();
+    }
+
+    public Company.Status getStatus() {
+        return company.getStatus();
+    }
 }

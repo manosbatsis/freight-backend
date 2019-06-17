@@ -6,7 +6,8 @@ import org.hibernate.query.Query;
 import java.util.List;
 import java.util.Optional;
 
-import static com.freight.util.QueryUtils.listObjectToSqlQueryInString;
+import static com.freight.util.QueryUtil.listObjectToSqlQuery;
+import static com.freight.util.QueryUtil.listStringToSqlQuery;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
@@ -73,6 +74,14 @@ public class BaseDao<T> {
     }
 
     @SuppressWarnings("unchecked")
+    protected List<T> getByFieldStringList(final String field, final List<String> data) {
+        requireNonNull(field);
+        final Query query = getSessionProvider().getSession().createQuery(
+                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listStringToSqlQuery(data));
+        return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
     protected List<T> getByFieldSorted(final String field,
                                        final Object data,
                                        final String sortField,
@@ -98,7 +107,7 @@ public class BaseDao<T> {
         requireNonNull(sortField);
         requireNonNull(sort);
         final Query query = getSessionProvider().getSession().createQuery(
-                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listObjectToSqlQueryInString(dataList)
+                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listObjectToSqlQuery(dataList)
                         + " ORDER BY " + sortField + " " + sort);
         return query.list();
     }
@@ -135,7 +144,7 @@ public class BaseDao<T> {
         requireNonNull(sortField);
         requireNonNull(sort);
         final Query query = getSessionProvider().getSession().createQuery(
-                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listObjectToSqlQueryInString(dataList)
+                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listObjectToSqlQuery(dataList)
                         + " ORDER BY " + sortField + " " + sort);
         query.setFirstResult(start);
         query.setMaxResults(limit);

@@ -1,14 +1,17 @@
 package com.freight.request_body;
 
-import javax.validation.constraints.NotNull;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
  * Created by toshikijahja on 11/5/17.
  */
+@ApiModel
 public class AuthenticationVerificationRequestBody implements Serializable {
 
-    @NotNull
+    @ApiModelProperty(value = "Verification code sent to user")
     private String verificationCode;
 
     public String getVerificationCode() {
