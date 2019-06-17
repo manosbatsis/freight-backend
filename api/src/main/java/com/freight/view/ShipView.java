@@ -6,7 +6,7 @@ import com.freight.model.Ship;
 /**
  * Created by toshikijahja on 3/26/19.
  */
-public class ShipView extends BaseView {
+public class ShipView {
 
     private final Ship ship;
 

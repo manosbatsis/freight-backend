@@ -1,6 +1,6 @@
 package com.freight.exception;
 
-import com.freight.BaseResponse;
+import com.freight.response.BaseResponse;
 
 import javax.ws.rs.core.Response;
 import java.time.Instant;

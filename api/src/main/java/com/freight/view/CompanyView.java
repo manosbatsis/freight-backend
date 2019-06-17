@@ -6,7 +6,7 @@ import com.freight.model.Company;
 /**
  * Created by toshikijahja on 3/26/19.
  */
-public class CompanyView extends BaseView {
+public class CompanyView {
 
     private final Company company;
 

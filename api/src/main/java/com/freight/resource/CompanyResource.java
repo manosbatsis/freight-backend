@@ -14,6 +14,7 @@ import com.freight.model.Company;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.CompanyRequestBody;
+import com.freight.response.CompanyResponse;
 import com.freight.view.CompanyView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,7 +46,7 @@ public class CompanyResource {
     @ApiOperation(value = "Get company")
     @Produces(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public CompanyView getCompany() {
+    public CompanyResponse getCompany() {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final CompanyDao companyDao = daoProvider.getDaoFactory().getCompanyDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
@@ -58,7 +59,7 @@ public class CompanyResource {
 
             final Company company = companyDao.getByIdOptional(user.getCompanyId())
                     .orElseThrow(() -> new FreightException(COMPANY_NOT_EXIST));
-            return new CompanyView(company);
+            return new CompanyResponse(new CompanyView(company));
         }
     }
 
@@ -66,12 +67,12 @@ public class CompanyResource {
     @ApiOperation(value = "Get company by companyId")
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public CompanyView getCompanyById(@PathParam("id") final int companyId) {
+    public CompanyResponse getCompanyById(@PathParam("id") final int companyId) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final CompanyDao companyDao = daoProvider.getDaoFactory().getCompanyDao(sessionProvider);
             final Company company = companyDao.getByIdOptional(companyId)
                     .orElseThrow(() -> new FreightException(COMPANY_NOT_EXIST));
-            return new CompanyView(company);
+            return new CompanyResponse(new CompanyView(company));
         }
     }
 
@@ -80,7 +81,7 @@ public class CompanyResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public CompanyView createCompany(final CompanyRequestBody companyRequestBody) {
+    public CompanyResponse createCompany(final CompanyRequestBody companyRequestBody) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final CompanyDao companyDao = daoProvider.getDaoFactory().getCompanyDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
@@ -88,7 +89,7 @@ public class CompanyResource {
             final Company company = companyDao.createCompany(companyRequestBody.getName(), companyRequestBody.getType());
             userDao.updateCompany(userScopeProvider.get().getGuid(), company);
             sessionProvider.commitTransaction();
-            return new CompanyView(company);
+            return new CompanyResponse(new CompanyView(company));
         }
     }
 }

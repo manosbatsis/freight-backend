@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * Created by toshikijahja on 3/26/19.
  */
-public class PortView extends BaseView {
+public class PortView {
 
     private final Port port;
 

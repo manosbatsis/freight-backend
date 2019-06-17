@@ -1,13 +1,13 @@
-package com.freight.view;
+package com.freight.response;
 
 /**
  * Created by toshikijahja on 10/18/17.
  */
-public class AccessTokenView extends BaseView {
+public class AccessTokenResponse extends BaseResponse {
 
     private final String token;
 
-    public AccessTokenView(final String token) {
+    public AccessTokenResponse(final String token) {
         this.token = token;
     }
 

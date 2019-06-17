@@ -7,7 +7,7 @@ import java.time.Instant;
 /**
  * Created by toshikijahja on 3/26/19.
  */
-public class UserView extends BaseView {
+public class UserView {
 
     private final User user;
 

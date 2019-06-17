@@ -1,4 +1,4 @@
-package com.freight;
+package com.freight.response;
 
 import com.freight.exception.FreightError;
 
