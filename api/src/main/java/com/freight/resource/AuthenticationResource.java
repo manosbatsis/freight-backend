@@ -26,11 +26,12 @@ import static com.freight.auth.JWTUtil.createJWT;
 import static com.freight.exception.BadRequest.ACCOUNT_WITH_EMAIL_EXIST;
 import static com.freight.exception.BadRequest.ACCOUNT_WITH_PHONE_EXIST;
 import static com.freight.exception.BadRequest.EMAIL_PHONE_EMPTY;
+import static com.freight.exception.BadRequest.VERIFICATION_CODE_NOT_EXIST;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
 import static com.freight.model.Authentication.Status.UNVERIFIED;
 import static com.freight.model.Authentication.Status.VERIFIED;
 import static com.freight.model.User.Type.NOT_KNOWN;
-import static java.util.Objects.requireNonNull;
+import static com.freight.util.AssertUtil.assertNotNull;
 
 /**
  * Created by toshikijahja on 6/14/19.
@@ -49,10 +50,6 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public AccessTokenView signUp(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
-        requireNonNull(authenticationRequestBody.getEmailOptional());
-        requireNonNull(authenticationRequestBody.getPhoneOptional());
-        requireNonNull(authenticationRequestBody.getPassword());
-
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final AuthenticationDao authenticationDao = daoProvider.getDaoFactory().getAuthenticationDao(sessionProvider);
             validateSignUpRequest(authenticationRequestBody, authenticationDao);
@@ -102,10 +99,6 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public AccessTokenView signIn(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
-        requireNonNull(authenticationRequestBody.getEmailOptional());
-        requireNonNull(authenticationRequestBody.getPhoneOptional());
-        requireNonNull(authenticationRequestBody.getPassword());
-
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final AuthenticationDao authenticationDao = daoProvider.getDaoFactory().getAuthenticationDao(sessionProvider);
             final String accessToken = authenticationDao.authenticate(
@@ -125,7 +118,7 @@ public class AuthenticationResource {
     @UserAuth(optional = false)
     public AccessTokenView verifyCode(final AuthenticationVerificationRequestBody authenticationVerificationRequestBody)
             throws Exception {
-        requireNonNull(authenticationVerificationRequestBody.getVerificationCode());
+        assertNotNull(authenticationVerificationRequestBody.getVerificationCode(), VERIFICATION_CODE_NOT_EXIST);
 
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final AuthenticationDao authenticationDao = daoProvider.getDaoFactory().getAuthenticationDao(sessionProvider);

@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by toshikijahja on 10/23/18.
  */
-public class QueryUtils<T> {
+public class QueryUtil<T> {
 
     public static String addQuote(final String string) {
         return "'" + string + "'";
@@ -20,8 +20,18 @@ public class QueryUtils<T> {
      * @param inputList
      * @return
      */
-    public static String listObjectToSqlQueryInString(final Collection<? extends Object> inputList) {
+    public static String listObjectToSqlQuery(final Collection<? extends Object> inputList) {
         final List<String> quoteStrings = inputList.stream().map(Object::toString).collect(toList());
+        return "(" + join(",", quoteStrings) + ") ";
+    }
+
+    /**
+     * Will add quote and call toString() to Object passed
+     * @param inputList
+     * @return
+     */
+    public static String listStringToSqlQuery(final Collection<String> inputList) {
+        final List<String> quoteStrings = inputList.stream().map(QueryUtil::addQuote).collect(toList());
         return "(" + join(",", quoteStrings) + ") ";
     }
 }

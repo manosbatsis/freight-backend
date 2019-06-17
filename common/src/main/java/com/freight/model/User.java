@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,8 +15,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.Instant;
 
 import static com.freight.model.User.Status.ACTIVE;
@@ -43,9 +40,8 @@ public class User {
     @Column
     private Integer phone;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "companyId")
-    private Company company;
+    @Column
+    private Integer companyId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -83,7 +79,7 @@ public class User {
         this.username = builder.username;
         this.email = builder.email;
         this.phone = builder.phone;
-        this.company = builder.company;
+        this.companyId = builder.companyId;
         this.type = builder.type;
         this.status = builder.status;
     }
@@ -108,8 +104,8 @@ public class User {
         return this.phone;
     }
 
-    public Company getCompany() {
-        return this.company;
+    public Integer getCompanyId() {
+        return this.companyId;
     }
 
     public Type getType() {
@@ -134,7 +130,7 @@ public class User {
         private String username;
         private String email;
         private Integer phone;
-        private Company company;
+        private Integer companyId;
         private Type type = NOT_KNOWN;
         private Status status = ACTIVE;
 
@@ -163,8 +159,8 @@ public class User {
             return this;
         }
 
-        public Builder company(final Company company) {
-            this.company = company;
+        public Builder companyId(final Integer companyId) {
+            this.companyId = companyId;
             return this;
         }
 
@@ -191,7 +187,7 @@ public class User {
                 .append(username)
                 .append(email)
                 .append(phone)
-                .append(company)
+                .append(companyId)
                 .append(type)
                 .append(status)
                 .append(created)
@@ -215,7 +211,7 @@ public class User {
                 .append(username, that.username)
                 .append(email, that.email)
                 .append(phone, that.phone)
-                .append(company, that.company)
+                .append(companyId, that.companyId)
                 .append(type, that.type)
                 .append(status, that.status)
                 .append(created, that.created)
@@ -231,7 +227,7 @@ public class User {
                 .append("username", username)
                 .append("email", email)
                 .append("phone", phone)
-                .append("company", company)
+                .append("companyId", companyId)
                 .append("type", type)
                 .append("status", status)
                 .append("created", created)

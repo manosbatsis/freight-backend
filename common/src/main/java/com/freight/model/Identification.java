@@ -93,6 +93,8 @@ public class Identification {
         private int typeId;
         private Type type;
 
+        public IdentificationPK() {}
+
         public IdentificationPK(final int typeId, final Type type) {
             this.typeId = typeId;
             this.type = type;

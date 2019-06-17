@@ -1,5 +1,6 @@
 package com.freight.dao;
 
+import com.freight.model.Company;
 import com.freight.model.User;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -8,7 +9,11 @@ import org.hibernate.query.Query;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+import static com.freight.exception.BadRequest.COMPANY_NOT_EXIST;
+import static com.freight.exception.BadRequest.GUID_NOT_EXIST;
+import static com.freight.exception.BadRequest.TYPE_NOT_EXIST;
 import static com.freight.model.User.Status.ACTIVE;
+import static com.freight.util.AssertUtil.assertNotNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -34,9 +39,8 @@ public class UserDao extends BaseDao<User> {
                            @Nullable final String email,
                            @Nullable final Integer phone,
                            final User.Type type) {
-        requireNonNull(guid);
-        requireNonNull(type);
-        getSessionProvider().startTransaction();
+        assertNotNull(guid, GUID_NOT_EXIST);
+        assertNotNull(type, TYPE_NOT_EXIST);
         final User user = new User.Builder()
                 .guid(guid)
                 .status(ACTIVE)
@@ -49,13 +53,13 @@ public class UserDao extends BaseDao<User> {
         return user;
     }
 
-    public void updateUser(final String guid,
-                           final String username) {
-        requireNonNull(guid);
+    public void updateCompany(final String guid, final Company company) {
+        assertNotNull(guid, GUID_NOT_EXIST);
+        assertNotNull(company, COMPANY_NOT_EXIST);
         final Query query = getSessionProvider().getSession().createQuery(
-                "UPDATE " + clazz.getName() + " SET username = :username WHERE guid = :guid");
+                "UPDATE " + clazz.getName() + " SET companyId = :companyId WHERE guid = :guid");
         query.setParameter("guid", guid);
-        query.setParameter("username", username);
+        query.setParameter("companyId", company.getId());
         query.executeUpdate();
     }
 }

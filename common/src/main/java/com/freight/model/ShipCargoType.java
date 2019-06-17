@@ -69,6 +69,8 @@ public class ShipCargoType {
         private Ship ship;
         private CargoType cargoType;
 
+        public ShipCargoTypePK() {}
+
         public ShipCargoTypePK(final Ship ship, final CargoType cargoType) {
             this.ship = ship;
             this.cargoType = cargoType;
