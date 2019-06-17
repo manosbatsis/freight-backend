@@ -8,7 +8,7 @@ import java.time.Instant;
 /**
  * Created by toshikijahja on 3/26/19.
  */
-public class ShipmentView extends BaseView {
+public class ShipmentView {
 
     private final Shipment shipment;
 

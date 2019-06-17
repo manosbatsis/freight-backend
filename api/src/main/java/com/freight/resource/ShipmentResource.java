@@ -14,6 +14,7 @@ import com.freight.model.Shipment;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.ShipmentRequestBody;
+import com.freight.response.ShipmentResponse;
 import com.freight.view.ShipmentView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,7 +57,7 @@ public class ShipmentResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public ShipmentView createShipment(final ShipmentRequestBody shipmentRequestBody) {
+    public ShipmentResponse createShipment(final ShipmentRequestBody shipmentRequestBody) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final PortDao portDao = daoProvider.getDaoFactory().getPortDao(sessionProvider);
             final ShipDao shipDao = daoProvider.getDaoFactory().getShipDao(sessionProvider);
@@ -105,7 +106,7 @@ public class ShipmentResource {
                     shipmentRequestBody.getEstimatedDeparture(),
                     shipmentRequestBody.getEstimatedArrival());
 
-            return new ShipmentView(shipment);
+            return new ShipmentResponse(new ShipmentView(shipment));
         }
     }
 }

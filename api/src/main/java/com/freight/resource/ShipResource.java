@@ -19,6 +19,7 @@ import com.freight.model.Ship;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.ShipRequestBody;
+import com.freight.response.ShipResponse;
 import com.freight.view.ShipView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,12 +56,12 @@ public class ShipResource {
     @ApiOperation(value = "Get ship by shipId")
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ShipView getShip(@PathParam("id") final int shipId) {
+    public ShipResponse getShip(@PathParam("id") final int shipId) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final ShipDao shipDao = daoProvider.getDaoFactory().getShipDao(sessionProvider);
             final Ship ship = shipDao.getByIdOptional(shipId)
                     .orElseThrow(() -> new FreightException(SHIP_NOT_EXIST));
-            return new ShipView(ship);
+            return new ShipResponse(new ShipView(ship));
         }
     }
 
@@ -69,7 +70,7 @@ public class ShipResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public ShipView createShip(final ShipRequestBody shipRequestBody) {
+    public ShipResponse createShip(final ShipRequestBody shipRequestBody) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final CargoTypeDao cargoTypeDao = daoProvider.getDaoFactory().getCargoTypeDao(sessionProvider);
             final CompanyDao companyDao = daoProvider.getDaoFactory().getCompanyDao(sessionProvider);
@@ -108,7 +109,7 @@ public class ShipResource {
                     shipRequestBody.getGrossTonnageOptional().orElse(null));
             shipCargoTypeDao.createShipCargoTypes(ship, cargoTypes);
             sessionProvider.commitTransaction();
-            return new ShipView(ship);
+            return new ShipResponse(new ShipView(ship));
         }
     }
 }

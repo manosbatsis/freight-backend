@@ -7,6 +7,7 @@ import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
+import com.freight.response.UserResponse;
 import com.freight.view.UserView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,12 +35,12 @@ public class UserResource {
     @ApiOperation(value = "Get user")
     @Produces(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public UserView getUser() {
+    public UserResponse getUser() {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
                     .orElseThrow(() -> new FreightException(USER_NOT_EXIST));
-            return new UserView(user);
+            return new UserResponse(new UserView(user));
         }
     }
 }

@@ -10,7 +10,7 @@ import com.freight.model.Authentication;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.AuthenticationRequestBody;
 import com.freight.request_body.AuthenticationVerificationRequestBody;
-import com.freight.view.AccessTokenView;
+import com.freight.response.AccessTokenResponse;
 import com.google.inject.Provider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,7 +49,7 @@ public class AuthenticationResource {
     @ApiOperation(value = "Sign user up")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public AccessTokenView signUp(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
+    public AccessTokenResponse signUp(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final AuthenticationDao authenticationDao = daoProvider.getDaoFactory().getAuthenticationDao(sessionProvider);
             validateSignUpRequest(authenticationRequestBody, authenticationDao);
@@ -61,7 +61,7 @@ public class AuthenticationResource {
 
             // TODO: send verification code to email or phone
 
-            return new AccessTokenView(accessToken);
+            return new AccessTokenResponse(accessToken);
         }
     }
 
@@ -98,7 +98,7 @@ public class AuthenticationResource {
     @Path("/authenticate")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public AccessTokenView signIn(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
+    public AccessTokenResponse signIn(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final AuthenticationDao authenticationDao = daoProvider.getDaoFactory().getAuthenticationDao(sessionProvider);
             final String accessToken = authenticationDao.authenticate(
@@ -106,7 +106,7 @@ public class AuthenticationResource {
                     authenticationRequestBody.getPhoneOptional(),
                     authenticationRequestBody.getPassword());
 
-            return new AccessTokenView(accessToken);
+            return new AccessTokenResponse(accessToken);
         }
     }
 
@@ -116,7 +116,7 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public AccessTokenView verifyCode(final AuthenticationVerificationRequestBody authenticationVerificationRequestBody)
+    public AccessTokenResponse verifyCode(final AuthenticationVerificationRequestBody authenticationVerificationRequestBody)
             throws Exception {
         assertNotNull(authenticationVerificationRequestBody.getVerificationCode(), VERIFICATION_CODE_NOT_EXIST);
 
@@ -140,7 +140,7 @@ public class AuthenticationResource {
 
             final String accessToken = createJWT(null, authentication.getGuid(),
                     NOT_KNOWN, VERIFIED, authentication.getToken());
-            return new AccessTokenView(accessToken);
+            return new AccessTokenResponse(accessToken);
         }
     }
 }
