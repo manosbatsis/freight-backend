@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+JAVA_OPTIONS=""
+args=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -E*)
+            JAVA_OPTIONS+=" -Denv=${1:2}"
+            ;;
+        -C*)
+            JAVA_OPTIONS+=" -Dcolo=${1:2}"
+            ;;
+        # Assume everything else is a program argument
+        *)
+            args+=",$1"
+            ;;
+    esac
+    shift
+done
+
+# Remove leading comma
+args=${args:1}
+
+mvn --quiet clean compile exec:java -f mysql_schema_migration/pom.xml -T 1C -am -DskipTests -Dmaven.test.skip=true \
+    -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true \
+    -Dexec.classpathScope=compile -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=MainApp \
+    -Dexec.arguments="$args" $JAVA_OPTIONS
