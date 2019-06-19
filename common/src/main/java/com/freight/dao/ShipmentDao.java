@@ -7,6 +7,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import java.time.Instant;
+import java.util.List;
 
 import static com.freight.exception.BadRequest.DESTINATION_PORT_EMPTY;
 import static com.freight.exception.BadRequest.ORIGIN_PORT_EMPTY;
@@ -21,6 +22,10 @@ public class ShipmentDao extends BaseDao<Shipment> {
     @AssistedInject
     public ShipmentDao(@Assisted final SessionProvider sessionProvider) {
         super(sessionProvider, Shipment.class);
+    }
+
+    public List<Shipment> getByStatus(final Shipment.Status status) {
+        return getByField("status", status);
     }
 
     public Shipment createShipment(final Ship ship,

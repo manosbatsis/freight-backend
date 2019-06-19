@@ -1,8 +1,11 @@
 package com.freight.persistence;
 
 import com.freight.dao.AuthenticationDao;
+import com.freight.dao.BulkTypeDao;
+import com.freight.dao.CargoDao;
 import com.freight.dao.CargoTypeDao;
 import com.freight.dao.CompanyDao;
+import com.freight.dao.ContainerTypeDao;
 import com.freight.dao.IdentificationDao;
 import com.freight.dao.PortDao;
 import com.freight.dao.SessionProvider;
@@ -17,13 +20,15 @@ import com.freight.dao.UserDao;
 public interface DaoFactory {
 
     AuthenticationDao getAuthenticationDao(final SessionProvider sessionProvider);
+    BulkTypeDao getBulkTypeDao(final SessionProvider sessionProvider);
+    CargoDao getCargoDao(final SessionProvider sessionProvider);
     CargoTypeDao getCargoTypeDao(final SessionProvider sessionProvider);
     CompanyDao getCompanyDao(final SessionProvider sessionProvider);
+    ContainerTypeDao getContainerTypeDao(final SessionProvider sessionProvider);
     IdentificationDao getIdentificationDao(final SessionProvider sessionProvider);
     PortDao getPortDao(final SessionProvider sessionProvider);
     ShipDao getShipDao(final SessionProvider sessionProvider);
     ShipCargoTypeDao getShipCargoTypeDao(final SessionProvider sessionProvider);
     ShipmentDao getShipmentDao(final SessionProvider sessionProvider);
     UserDao getUserDao(final SessionProvider sessionProvider);
-
 }

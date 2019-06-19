@@ -14,6 +14,7 @@ import com.freight.model.Shipment;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.ShipmentRequestBody;
+import com.freight.response.ShipmentListResponse;
 import com.freight.response.ShipmentResponse;
 import com.freight.view.ShipmentView;
 import io.swagger.annotations.Api;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -40,6 +42,7 @@ import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
 import static com.google.common.primitives.Ints.asList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Api(tags = {"user", "public"})
@@ -51,6 +54,17 @@ public class ShipmentResource {
 
     @Inject
     private Provider<UserScope> userScopeProvider;
+
+    @GET
+    @ApiOperation(value = "List available/open shipment")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ShipmentListResponse getOpenShipment() {
+        try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
+            final ShipmentDao shipmentDao = daoProvider.getDaoFactory().getShipmentDao(sessionProvider);
+            final List<Shipment> shipments = shipmentDao.getByStatus(Shipment.Status.OPEN);
+            return new ShipmentListResponse(shipments.stream().map(ShipmentView::new).collect(toList()));
+        }
+    }
 
     @POST
     @ApiOperation(value = "Create shipment")
