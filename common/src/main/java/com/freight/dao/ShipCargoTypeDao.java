@@ -6,7 +6,9 @@ import com.freight.model.ShipCargoType;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
 import static com.freight.util.AssertUtil.assertNotNull;
@@ -36,5 +38,13 @@ public class ShipCargoTypeDao extends BaseDao<ShipCargoType> {
         }).collect(toList());
         getSessionProvider().commitTransaction();
         return shipCargoTypes;
+    }
+
+    public List<ShipCargoType> getByShipIdAndCargoTypeId(final int shipId,
+                                                         final int cargoTypeId) {
+        Map<String, Object> inputParams = new HashMap<>();
+        inputParams.put("shipId", shipId);
+        inputParams.put("cargoTypeId", cargoTypeId);
+        return getByFields("ship.id = :shipId AND cargoType.id = :cargoTypeId", inputParams);
     }
 }

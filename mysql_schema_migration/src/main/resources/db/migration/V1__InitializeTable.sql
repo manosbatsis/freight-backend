@@ -158,9 +158,10 @@ CREATE TABLE `Port` (
   `lon` decimal(11, 8) DEFAULT NULL,
   `city` varchar(512) DEFAULT NULL,
   `province` varchar(512) DEFAULT NULL,
-  `postalCode` varchar(512) DEFAULT NULL,
+  `island` varchar(512) DEFAULT NULL,
   `country` varchar(512) DEFAULT NULL,
   `status` enum('ACTIVE', 'INACTIVE') CHARACTER SET utf8 NOT NULL DEFAULT 'ACTIVE',
+  `size` enum('BIG', 'SMALL') CHARACTER SET utf8 NOT NULL DEFAULT 'SMALL',
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

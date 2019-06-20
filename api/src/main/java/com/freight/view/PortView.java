@@ -44,8 +44,8 @@ public class PortView {
         return port.getProvince();
     }
 
-    public String getPostalCode() {
-        return port.getPostalCode();
+    public String getIsland() {
+        return port.getIsland();
     }
 
     public String getCountry() {
@@ -54,5 +54,9 @@ public class PortView {
 
     public Port.Status getStatus() {
         return port.getStatus();
+    }
+
+    public Port.Size getSize() {
+        return port.getSize();
     }
 }

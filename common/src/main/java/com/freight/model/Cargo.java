@@ -153,6 +153,10 @@ public class Cargo {
         return userId;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
     public CargoType getCargoType() {
         return cargoType;
     }

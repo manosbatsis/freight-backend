@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import org.hibernate.query.Query;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.freight.util.QueryUtil.listObjectToSqlQuery;
@@ -70,6 +71,19 @@ public class BaseDao<T> {
         final Query query = getSessionProvider().getSession().createQuery(
                 "FROM " + clazz.getName() + " WHERE " + field + " = :" + DATA);
         query.setParameter(DATA, data);
+        return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<T> getByFields(final String whereQuery, final Map<String, Object> inputParam) {
+        requireNonNull(whereQuery);
+        requireNonNull(inputParam);
+        if (inputParam.isEmpty()) {
+            return emptyList();
+        }
+        final Query query = getSessionProvider().getSession().createQuery(
+                "FROM " + clazz.getName() + " WHERE " + whereQuery);
+        inputParam.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query.list();
     }
 

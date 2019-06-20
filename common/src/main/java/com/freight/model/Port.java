@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import static com.freight.model.Port.Size.SMALL;
+
 /**
  * Created by toshikijahja on 11/7/18.
  */
@@ -46,7 +48,7 @@ public class Port {
     private String province;
 
     @Column
-    private String postalCode;
+    private String island;
 
     @Column
     private String country;
@@ -54,6 +56,10 @@ public class Port {
     @Column
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Size size;
 
     @Column
     @CreationTimestamp
@@ -68,6 +74,11 @@ public class Port {
         INACTIVE
     }
 
+    public enum Size {
+        BIG,
+        SMALL
+    }
+
     public Port() {}
 
     private Port(final Builder builder) {
@@ -78,9 +89,10 @@ public class Port {
         this.lon = builder.lon;
         this.city = builder.city;
         this.province = builder.province;
-        this.postalCode = builder.postalCode;
+        this.island = builder.island;
         this.country = builder.country;
         this.status = builder.status;
+        this.size = builder.size;
     }
 
     public int getId() {
@@ -111,8 +123,8 @@ public class Port {
         return province;
     }
 
-    public String getPostalCode() {
-        return postalCode;
+    public String getIsland() {
+        return island;
     }
 
     public String getCountry() {
@@ -121,6 +133,10 @@ public class Port {
 
     public Status getStatus() {
         return status;
+    }
+
+    public Size getSize() {
+        return size;
     }
 
     public Instant getCreated() {
@@ -139,9 +155,10 @@ public class Port {
         private BigDecimal lon;
         private String city;
         private String province;
-        private String postalCode;
+        private String island;
         private String country;
         private Status status = Status.ACTIVE;
+        private Size size = SMALL;
 
         public Builder id(final int id) {
             this.id = id;
@@ -178,8 +195,8 @@ public class Port {
             return this;
         }
 
-        public Builder postalCode(final String postalCode) {
-            this.postalCode = postalCode;
+        public Builder island(final String island) {
+            this.island = island;
             return this;
         }
 
@@ -190,6 +207,11 @@ public class Port {
 
         public Builder status(final Status status) {
             this.status = status;
+            return this;
+        }
+
+        public Builder size(final Size size) {
+            this.size = size;
             return this;
         }
 
@@ -208,9 +230,10 @@ public class Port {
                 .append(lon)
                 .append(city)
                 .append(province)
-                .append(postalCode)
+                .append(island)
                 .append(country)
                 .append(status)
+                .append(size)
                 .append(created)
                 .append(lastModified)
                 .toHashCode();
@@ -235,9 +258,10 @@ public class Port {
                 .append(lon, that.lon)
                 .append(city, that.city)
                 .append(province, that.province)
-                .append(postalCode, that.postalCode)
+                .append(island, that.island)
                 .append(country, that.country)
                 .append(status, that.status)
+                .append(size, that.size)
                 .append(created, that.created)
                 .append(lastModified, that.lastModified)
                 .isEquals();
@@ -253,9 +277,10 @@ public class Port {
                 .append("lon", lon)
                 .append("city", city)
                 .append("province", province)
-                .append("postalCode", postalCode)
+                .append("island", island)
                 .append("country", country)
                 .append("status", status)
+                .append("size", size)
                 .append("created", created)
                 .append("lastModified", lastModified)
                 .toString();
