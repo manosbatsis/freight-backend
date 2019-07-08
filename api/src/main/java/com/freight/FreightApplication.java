@@ -54,7 +54,7 @@ public class FreightApplication extends ResourceConfig {
         swaggerSetup();
 //        }
 
-//        register(CORSFilter.class);
+        register(CorsFilter.class);
 //        register(FreightApplicationEventListener.class);
     }
 

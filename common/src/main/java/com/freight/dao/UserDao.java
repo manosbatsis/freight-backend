@@ -5,8 +5,8 @@ import com.freight.model.User;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import org.hibernate.query.Query;
+import org.testng.internal.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static com.freight.exception.BadRequest.COMPANY_NOT_EXIST;

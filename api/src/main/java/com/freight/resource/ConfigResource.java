@@ -5,6 +5,7 @@ import com.freight.dao.CargoTypeDao;
 import com.freight.dao.ContainerTypeDao;
 import com.freight.dao.SessionProvider;
 import com.freight.model.BulkType;
+import com.freight.model.Cargo;
 import com.freight.model.CargoType;
 import com.freight.model.ContainerType;
 import com.freight.persistence.DaoProvider;
@@ -22,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"public"})
@@ -53,6 +55,8 @@ public class ConfigResource {
                     .cargoTypes(cargoTypeViews)
                     .bulkTypes(bulkTypeViews)
                     .containerTypes(containerTypeViews)
+                    .weightUnits(asList(Cargo.WeightUnit.values()))
+                    .dimensionUnits(asList(Cargo.DimensionUnit.values()))
                     .build();
         }
     }
