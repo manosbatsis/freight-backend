@@ -1,6 +1,7 @@
 package com.freight.response;
 
 
+import com.freight.model.Cargo;
 import com.freight.view.BulkTypeView;
 import com.freight.view.CargoTypeView;
 import com.freight.view.ContainerTypeView;
@@ -17,11 +18,15 @@ public class ConfigResponse extends BaseResponse {
     private final List<CargoTypeView> cargoTypes;
     private final List<BulkTypeView> bulkTypes;
     private final List<ContainerTypeView> containerTypes;
+    private final List<Cargo.WeightUnit> weightUnits;
+    private final List<Cargo.DimensionUnit> dimensionUnits;
 
     public ConfigResponse(final Builder builder) {
         this.cargoTypes = builder.cargoTypes;
         this.bulkTypes = builder.bulkTypes;
         this.containerTypes = builder.containerTypes;
+        this.weightUnits = builder.weightUnits;
+        this.dimensionUnits = builder.dimensionUnits;
     }
 
     public List<CargoTypeView> getCargoTypes() {
@@ -36,10 +41,20 @@ public class ConfigResponse extends BaseResponse {
         return containerTypes;
     }
 
+    public List<Cargo.WeightUnit> getWeightUnits() {
+        return weightUnits;
+    }
+
+    public List<Cargo.DimensionUnit> getDimensionUnits() {
+        return dimensionUnits;
+    }
+
     public static class Builder {
         private List<CargoTypeView> cargoTypes = emptyList();
         private List<BulkTypeView> bulkTypes = emptyList();
         private List<ContainerTypeView> containerTypes = emptyList();
+        private List<Cargo.WeightUnit> weightUnits = emptyList();
+        private List<Cargo.DimensionUnit> dimensionUnits = emptyList();
 
         public Builder cargoTypes(final List<CargoTypeView> cargoTypes) {
             this.cargoTypes = cargoTypes;
@@ -53,6 +68,16 @@ public class ConfigResponse extends BaseResponse {
 
         public Builder containerTypes(final List<ContainerTypeView> containerTypes) {
             this.containerTypes = containerTypes;
+            return this;
+        }
+
+        public Builder weightUnits(final List<Cargo.WeightUnit> weightUnits) {
+            this.weightUnits = weightUnits;
+            return this;
+        }
+
+        public Builder dimensionUnits(final List<Cargo.DimensionUnit> dimensionUnits) {
+            this.dimensionUnits = dimensionUnits;
             return this;
         }
 

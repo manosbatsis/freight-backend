@@ -16,7 +16,7 @@
 
   <properties>
     <jersey2.version>2.19</jersey2.version>
-    <guice.version>4.2.2</guice.version>
+    <guice.version>4.1.0</guice.version>
     <jackson.version>2.9.9</jackson.version>
   </properties>
 
@@ -211,6 +211,9 @@
             <webInfIncludeJarPattern>^$</webInfIncludeJarPattern>
             <containerIncludeJarPattern>^$</containerIncludeJarPattern>
           </webApp>
+          <jettyXml>
+            ${project.basedir}/src/test/resources/jetty.xml,${project.basedir}/src/test/resources/jetty-http.xml,${project.basedir}/src/test/resources/jetty-ssl.xml,${project.basedir}/src/test/resources/jetty-https.xml
+          </jettyXml>
         </configuration>
       </plugin>
 
