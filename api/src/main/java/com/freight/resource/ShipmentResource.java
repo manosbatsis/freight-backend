@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.freight.exception.BadRequest.ARRIVAL_IN_PAST;
+import static com.freight.exception.BadRequest.DEPARTURE_IN_PAST;
+import static com.freight.exception.BadRequest.DEPARTURE_NOT_BEFORE_ARRIVAL;
 import static com.freight.exception.BadRequest.DESTINATION_ORIGIN_PORT_CANNOT_BE_SAME;
-import static com.freight.exception.BadRequest.ESTIMATED_ARRIVAL_IN_PAST;
-import static com.freight.exception.BadRequest.ESTIMATED_DEPARTURE_IN_PAST;
-import static com.freight.exception.BadRequest.ESTIMATED_DEPARTURE_NOT_BEFORE_ESTIMATED_ARRIVAL;
 import static com.freight.exception.BadRequest.PORT_NOT_EXIST;
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
@@ -102,23 +102,23 @@ public class ShipmentResource {
             }
             final Map<Integer, Port> portIdMap = ports.stream().collect(toMap(Port::getId, Function.identity()));
 
-            // Verify estimated departure and arrival time
-            if (shipmentRequestBody.getEstimatedDeparture() <= Instant.now().getEpochSecond()) {
-                throw new FreightException(ESTIMATED_DEPARTURE_IN_PAST);
+            // Verify departure and arrival time
+            if (shipmentRequestBody.getDeparture() <= Instant.now().getEpochSecond()) {
+                throw new FreightException(DEPARTURE_IN_PAST);
             }
-            if (shipmentRequestBody.getEstimatedArrival() <= Instant.now().getEpochSecond()) {
-                throw new FreightException(ESTIMATED_ARRIVAL_IN_PAST);
+            if (shipmentRequestBody.getArrival() <= Instant.now().getEpochSecond()) {
+                throw new FreightException(ARRIVAL_IN_PAST);
             }
-            if (shipmentRequestBody.getEstimatedArrival() <= shipmentRequestBody.getEstimatedDeparture()) {
-                throw new FreightException(ESTIMATED_DEPARTURE_NOT_BEFORE_ESTIMATED_ARRIVAL);
+            if (shipmentRequestBody.getArrival() <= shipmentRequestBody.getDeparture()) {
+                throw new FreightException(DEPARTURE_NOT_BEFORE_ARRIVAL);
             }
 
             final Shipment shipment = shipmentDao.createShipment(
                     ship,
                     portIdMap.get(shipmentRequestBody.getOriginPortId()),
                     portIdMap.get(shipmentRequestBody.getDestinationPortId()),
-                    shipmentRequestBody.getEstimatedDeparture(),
-                    shipmentRequestBody.getEstimatedArrival());
+                    shipmentRequestBody.getDeparture(),
+                    shipmentRequestBody.getArrival());
 
             return new ShipmentResponse(new ShipmentView(shipment));
         }

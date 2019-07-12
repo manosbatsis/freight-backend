@@ -31,8 +31,8 @@ public class ShipmentDao extends BaseDao<Shipment> {
     public Shipment createShipment(final Ship ship,
                                    final Port originPort,
                                    final Port destinationPort,
-                                   final long estimatedDeparture,
-                                   final long estimatedArrival) {
+                                   final long departure,
+                                   final long arrival) {
         assertNotNull(ship, SHIP_NOT_EXIST);
         assertNotNull(originPort, ORIGIN_PORT_EMPTY);
         assertNotNull(destinationPort, DESTINATION_PORT_EMPTY);
@@ -41,8 +41,8 @@ public class ShipmentDao extends BaseDao<Shipment> {
                 .ship(ship)
                 .originPort(originPort)
                 .destinationPort(destinationPort)
-                .estimatedDeparture(Instant.ofEpochSecond(estimatedDeparture))
-                .estimatedArrival(Instant.ofEpochSecond(estimatedArrival))
+                .departure(Instant.ofEpochSecond(departure))
+                .arrival(Instant.ofEpochSecond(arrival))
                 .build();
         getSessionProvider().getSession().persist(shipment);
         getSessionProvider().commitTransaction();

@@ -1,6 +1,7 @@
 package com.freight.view;
 
 import com.freight.model.Company;
+import com.freight.model.Type;
 
 
 /**
@@ -22,7 +23,7 @@ public class CompanyView {
         return company.getName();
     }
 
-    public Company.Type getType() {
+    public Type getType() {
         return company.getType();
     }
 

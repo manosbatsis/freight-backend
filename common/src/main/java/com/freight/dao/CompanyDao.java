@@ -1,6 +1,7 @@
 package com.freight.dao;
 
 import com.freight.model.Company;
+import com.freight.model.Type;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -19,7 +20,7 @@ public class CompanyDao extends BaseDao<Company> {
     }
 
     public Company createCompany(final String name,
-                                 final Company.Type type) {
+                                 final Type type) {
         assertNotNull(name, COMPANY_NAME_NOT_EXIST);
         assertNotNull(type, TYPE_NOT_EXIST);
         getSessionProvider().startTransaction();

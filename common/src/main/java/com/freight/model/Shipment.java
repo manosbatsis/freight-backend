@@ -44,10 +44,10 @@ public class Shipment {
     private Port destinationPort;
 
     @Column
-    private Instant estimatedDeparture;
+    private Instant departure;
 
     @Column
-    private Instant estimatedArrival;
+    private Instant arrival;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -87,8 +87,8 @@ public class Shipment {
         this.ship = builder.ship;
         this.originPort = builder.originPort;
         this.destinationPort = builder.destinationPort;
-        this.estimatedDeparture = builder.estimatedDeparture;
-        this.estimatedArrival = builder.estimatedArrival;
+        this.departure = builder.departure;
+        this.arrival = builder.arrival;
         this.status = builder.status;
         this.shipStatus = builder.shipStatus;
     }
@@ -109,12 +109,12 @@ public class Shipment {
         return destinationPort;
     }
 
-    public Instant getEstimatedDeparture() {
-        return estimatedDeparture;
+    public Instant getDeparture() {
+        return departure;
     }
 
-    public Instant getEstimatedArrival() {
-        return estimatedArrival;
+    public Instant getArrival() {
+        return arrival;
     }
 
     public Status getStatus() {
@@ -138,8 +138,8 @@ public class Shipment {
         private Ship ship;
         private Port originPort;
         private Port destinationPort;
-        private Instant estimatedDeparture;
-        private Instant estimatedArrival;
+        private Instant departure;
+        private Instant arrival;
         private Status status = Status.OPEN;
         private ShipStatus shipStatus = DOCKING_ORIGIN;
 
@@ -163,13 +163,13 @@ public class Shipment {
             return this;
         }
 
-        public Builder estimatedDeparture(final Instant estimatedDeparture) {
-            this.estimatedDeparture = estimatedDeparture;
+        public Builder departure(final Instant departure) {
+            this.departure = departure;
             return this;
         }
 
-        public Builder estimatedArrival(final Instant estimatedArrival) {
-            this.estimatedArrival = estimatedArrival;
+        public Builder arrival(final Instant arrival) {
+            this.arrival = arrival;
             return this;
         }
 
@@ -195,8 +195,8 @@ public class Shipment {
                 .append(ship)
                 .append(originPort)
                 .append(destinationPort)
-                .append(estimatedDeparture)
-                .append(estimatedArrival)
+                .append(departure)
+                .append(arrival)
                 .append(status)
                 .append(shipStatus)
                 .append(created)
@@ -220,8 +220,8 @@ public class Shipment {
                 .append(ship, that.ship)
                 .append(originPort, that.originPort)
                 .append(destinationPort, that.destinationPort)
-                .append(estimatedDeparture, that.estimatedDeparture)
-                .append(estimatedArrival, that.estimatedArrival)
+                .append(departure, that.departure)
+                .append(arrival, that.arrival)
                 .append(status, that.status)
                 .append(shipStatus, that.shipStatus)
                 .append(created, that.created)
@@ -236,8 +236,8 @@ public class Shipment {
                 .append("ship", ship)
                 .append("originPort", originPort)
                 .append("destinationPort", destinationPort)
-                .append("estimatedDeparture", estimatedDeparture)
-                .append("estimatedArrival", estimatedArrival)
+                .append("departure", departure)
+                .append("arrival", arrival)
                 .append("status", status)
                 .append("shipStatus", shipStatus)
                 .append("created", created)

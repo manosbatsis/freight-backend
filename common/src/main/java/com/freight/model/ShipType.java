@@ -9,36 +9,26 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.Instant;
 
-import static com.freight.model.Company.Status.UNVERIFIED;
-import static com.freight.model.Type.CUSTOMER;
-
 /**
  * Created by toshikijahja on 7/29/17.
  */
 @Entity
-public class Company {
+public class ShipType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
-    private String name;
+    private String displayName;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Type type;
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(nullable = false)
+    private String type;
 
     @Column
     @CreationTimestamp
@@ -48,34 +38,25 @@ public class Company {
     @UpdateTimestamp
     private Instant lastModified;
 
-    public enum Status {
-        VERIFIED,
-        UNVERIFIED
-    }
+    public ShipType() {}
 
-    public Company() {}
-
-    private Company(final Builder builder) {
+    private ShipType(final Builder builder) {
         this.id = builder.id;
-        this.name = builder.name;
+        this.displayName = builder.displayName;
         this.type = builder.type;
-        this.status = builder.status;
+
     }
 
     public int getId() {
         return this.id;
     }
 
-    public String getName() {
-        return this.name;
+    public String getDisplayName() {
+        return this.displayName;
     }
 
-    public Type getType() {
+    public String getType() {
         return this.type;
-    }
-
-    public Status getStatus() {
-        return this.status;
     }
 
     public Instant getCreated() {
@@ -88,32 +69,26 @@ public class Company {
 
     public static class Builder {
         private int id;
-        private String name;
-        private Type type = CUSTOMER;
-        private Status status = UNVERIFIED;
+        private String displayName;
+        private String type;
 
         public Builder id(final int id) {
             this.id = id;
             return this;
         }
 
-        public Builder name(final String name) {
-            this.name = name;
+        public Builder displayName(final String displayName) {
+            this.displayName = displayName;
             return this;
         }
 
-        public Builder type(final Type type) {
+        public Builder type(final String type) {
             this.type = type;
             return this;
         }
 
-        public Builder status(final Status status) {
-            this.status = status;
-            return this;
-        }
-
-        public Company build() {
-            return new Company(this);
+        public ShipType build() {
+            return new ShipType(this);
         }
     }
 
@@ -121,9 +96,8 @@ public class Company {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(name)
+                .append(displayName)
                 .append(type)
-                .append(status)
                 .append(created)
                 .append(lastModified)
                 .toHashCode();
@@ -139,12 +113,11 @@ public class Company {
             return false;
         }
 
-        final Company that = (Company) o;
+        final ShipType that = (ShipType) o;
         return new EqualsBuilder()
                 .append(id, that.id)
-                .append(name, that.name)
+                .append(displayName, that.displayName)
                 .append(type, that.type)
-                .append(status, that.status)
                 .append(created, that.created)
                 .append(lastModified, that.lastModified)
                 .isEquals();
@@ -154,9 +127,8 @@ public class Company {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("id", id)
-                .append("name", name)
+                .append("displayName", displayName)
                 .append("type", type)
-                .append("status", status)
                 .append("created", created)
                 .append("lastModified", lastModified)
                 .toString();

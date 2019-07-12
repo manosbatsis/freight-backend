@@ -39,6 +39,10 @@ public class Ship {
     @JoinColumn(name = "companyId")
     private Company company;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shipTypeId")
+    private ShipType shipType;
+
     @Column
     @Range(min = 1000, max = 2100)
     private Integer yearBuilt;
@@ -69,6 +73,7 @@ public class Ship {
         this.id = builder.id;
         this.name = builder.name;
         this.company = builder.company;
+        this.shipType = builder.shipType;
         this.yearBuilt = builder.yearBuilt;
         this.grossTonnage = builder.grossTonnage;
         this.status = builder.status;
@@ -84,6 +89,10 @@ public class Ship {
 
     public Company getCompany() {
         return this.company;
+    }
+
+    public ShipType getShipType() {
+        return this.shipType;
     }
 
     public Integer getYearBuilt() {
@@ -110,6 +119,7 @@ public class Ship {
         private int id;
         private String name;
         private Company company;
+        private ShipType shipType;
         private Integer yearBuilt;
         private Integer grossTonnage;
         private Status status = ACTIVE;
@@ -126,6 +136,11 @@ public class Ship {
 
         public Builder company(final Company company) {
             this.company = company;
+            return this;
+        }
+
+        public Builder shipType(final ShipType shipType) {
+            this.shipType = shipType;
             return this;
         }
 
@@ -155,6 +170,7 @@ public class Ship {
                 .append(id)
                 .append(name)
                 .append(company)
+                .append(shipType)
                 .append(yearBuilt)
                 .append(grossTonnage)
                 .append(status)
@@ -178,6 +194,7 @@ public class Ship {
                 .append(id, that.id)
                 .append(name, that.name)
                 .append(company, that.company)
+                .append(shipType, that.shipType)
                 .append(yearBuilt, that.yearBuilt)
                 .append(grossTonnage, that.grossTonnage)
                 .append(status, that.status)
@@ -192,6 +209,7 @@ public class Ship {
                 .append("id", id)
                 .append("name", name)
                 .append("company", company)
+                .append("shipType", shipType)
                 .append("yearBuilt", yearBuilt)
                 .append("grossTonnage", grossTonnage)
                 .append("status", status)

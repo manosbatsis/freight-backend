@@ -1,6 +1,6 @@
 package com.freight.request_body;
 
-import com.freight.model.Company;
+import com.freight.model.Type;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -16,13 +16,13 @@ public class CompanyRequestBody implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "Type of the company")
-    private Company.Type type;
+    private Type type;
 
     public String getName() {
         return name;
     }
 
-    public Company.Type getType() {
+    public Type getType() {
         return type;
     }
 }

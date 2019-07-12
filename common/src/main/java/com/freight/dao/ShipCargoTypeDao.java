@@ -42,7 +42,7 @@ public class ShipCargoTypeDao extends BaseDao<ShipCargoType> {
 
     public List<ShipCargoType> getByShipIdAndCargoTypeId(final int shipId,
                                                          final int cargoTypeId) {
-        Map<String, Object> inputParams = new HashMap<>();
+        final Map<String, Object> inputParams = new HashMap<>();
         inputParams.put("shipId", shipId);
         inputParams.put("cargoTypeId", cargoTypeId);
         return getByFields("ship.id = :shipId AND cargoType.id = :cargoTypeId", inputParams);
