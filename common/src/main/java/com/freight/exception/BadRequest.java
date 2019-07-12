@@ -16,9 +16,9 @@ public enum BadRequest implements ResponseError {
     DESTINATION_PORT_EMPTY("Destination port cannot be empty"),
     DIMENSION_EMPTY("Dimension unit cannot be empty"),
     EMAIL_PHONE_EMPTY("Email and phone number cannot be both empty"),
-    ESTIMATED_ARRIVAL_IN_PAST("Estimated arrival time has to be in future"),
-    ESTIMATED_DEPARTURE_IN_PAST("Estimated departure time has to be in future"),
-    ESTIMATED_DEPARTURE_NOT_BEFORE_ESTIMATED_ARRIVAL("Estimated departure has to be before estimated arrival time"),
+    ARRIVAL_IN_PAST("Arrival date has to be in future"),
+    DEPARTURE_IN_PAST("Departure date has to be in future"),
+    DEPARTURE_NOT_BEFORE_ARRIVAL("Departure date has to be before arrival date"),
     FCL_INPUT_EMPTY("Input needed for FCL cargo type cannot be empty"),
     GUID_NOT_EXIST("Guid does not exist"),
     LCL_INPUT_EMPTY("Input needed for LCL cargo type cannot be empty"),
@@ -33,6 +33,7 @@ public enum BadRequest implements ResponseError {
     USER_NOT_EXIST("User does not exist"),
     VERIFICATION_CODE_NOT_EXIST("Verification code does not exist"),
     VERIFICATION_CODE_WRONG("Verification code is wrong"),
+    VOLUME_EMPTY("Volume unit cannot be empty"),
     WEIGHT_EMPTY("Weight unit cannot be empty");
 
     private final String errorDescription;

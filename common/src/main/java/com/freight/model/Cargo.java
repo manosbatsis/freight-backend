@@ -17,7 +17,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 import java.time.Instant;
 
 import static com.freight.model.Cargo.Status.INQUIRY;
@@ -33,12 +32,8 @@ public class Cargo {
     private int id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "shipId")
-    private Ship ship;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "shipmentId")
-    private Shipment shipment;
+    @JoinColumn(name = "contractId")
+    private Contract contract;
 
     @Column
     private int userId;
@@ -55,11 +50,21 @@ public class Cargo {
     private int quantity;
 
     @Column
+    private Instant departure;
+
+    @Column
     private Integer weight;
 
     @Column
     @Enumerated(EnumType.STRING)
     private WeightUnit weightUnit;
+
+    @Column
+    private Integer volume;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private VolumeUnit volumeUnit;
 
     @Column
     private Integer length;
@@ -71,6 +76,7 @@ public class Cargo {
     private Integer height;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private DimensionUnit dimensionUnit;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -82,10 +88,8 @@ public class Cargo {
     private BulkType bulkType;
 
     @Column
-    private BigDecimal price;
-
-    @Column
-    private String currency;
+    @CreationTimestamp
+    private Instant expiry;
 
     @Column
     @CreationTimestamp
@@ -101,13 +105,19 @@ public class Cargo {
         LOADED,
         DELIVERED,
         DELAYED,
-        CANCELED
+        CANCELED,
+        EXPIRED
     }
 
     public enum WeightUnit {
         KG,
         TON,
         LB,
+        NOT_USED
+    }
+
+    public enum VolumeUnit {
+        M3,
         NOT_USED
     }
 
@@ -123,12 +133,14 @@ public class Cargo {
 
     private Cargo(final Builder builder) {
         this.id = builder.id;
-        this.ship = builder.ship;
-        this.shipment = builder.shipment;
+        this.contract = builder.contract;
         this.userId = builder.userId;
         this.status = builder.status;
         this.cargoType = builder.cargoType;
         this.quantity = builder.quantity;
+        this.departure = builder.departure;
+        this.volume = builder.volume;
+        this.volumeUnit = builder.volumeUnit;
         this.weight = builder.weight;
         this.weightUnit = builder.weightUnit;
         this.length = builder.length;
@@ -137,16 +149,15 @@ public class Cargo {
         this.dimensionUnit = builder.dimensionUnit;
         this.containerType = builder.containerType;
         this.bulkType = builder.bulkType;
-        this.price = builder.price;
-        this.currency = builder.currency;
+        this.expiry = builder.expiry;
     }
 
     public int getId() {
         return this.id;
     }
 
-    public Shipment getShipment() {
-        return shipment;
+    public Contract getContract() {
+        return contract;
     }
 
     public int getUserId() {
@@ -163,6 +174,18 @@ public class Cargo {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public Instant getDeparture() {
+        return departure;
+    }
+
+    public Integer getVolume() {
+        return volume;
+    }
+
+    public VolumeUnit getVolumeUnit() {
+        return volumeUnit;
     }
 
     public Integer getWeight() {
@@ -197,30 +220,28 @@ public class Cargo {
         return bulkType;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public String getCurrency() {
-        return currency;
+    public Instant getExpiry() {
+        return expiry;
     }
 
     public Instant getCreated() {
-        return this.created;
+        return created;
     }
 
     public Instant getLastModified() {
-        return this.lastModified;
+        return lastModified;
     }
 
     public static class Builder {
         private int id;
-        private Ship ship;
-        private Shipment shipment;
+        private Contract contract;
         private int userId;
         private Status status = INQUIRY;
         private CargoType cargoType;
         private int quantity;
+        private Instant departure;
+        private Integer volume;
+        private VolumeUnit volumeUnit = VolumeUnit.NOT_USED;
         private Integer weight;
         private WeightUnit weightUnit = WeightUnit.NOT_USED;
         private Integer length;
@@ -229,21 +250,15 @@ public class Cargo {
         private DimensionUnit dimensionUnit = DimensionUnit.NOT_USED;
         private ContainerType containerType;
         private BulkType bulkType;
-        private BigDecimal price;
-        private String currency;
+        private Instant expiry;
 
         public Builder id(final int id) {
             this.id = id;
             return this;
         }
 
-        public Builder ship(final Ship ship) {
-            this.ship = ship;
-            return this;
-        }
-
-        public Builder shipment(final Shipment shipment) {
-            this.shipment = shipment;
+        public Builder contract(final Contract contract) {
+            this.contract = contract;
             return this;
         }
 
@@ -264,6 +279,21 @@ public class Cargo {
 
         public Builder quantity(final int quantity) {
             this.quantity = quantity;
+            return this;
+        }
+
+        public Builder departure(final Instant departure) {
+            this.departure = departure;
+            return this;
+        }
+
+        public Builder volume(final Integer volume) {
+            this.volume = volume;
+            return this;
+        }
+
+        public Builder volumeUnit(final VolumeUnit volumeUnit) {
+            this.volumeUnit = volumeUnit;
             return this;
         }
 
@@ -307,13 +337,8 @@ public class Cargo {
             return this;
         }
 
-        public Builder price(final BigDecimal price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder currency(final String currency) {
-            this.currency = currency;
+        public Builder expiry(final Instant expiry) {
+            this.expiry = expiry;
             return this;
         }
 
@@ -326,12 +351,14 @@ public class Cargo {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(ship)
-                .append(shipment)
+                .append(contract)
                 .append(userId)
                 .append(status)
                 .append(cargoType)
                 .append(quantity)
+                .append(departure)
+                .append(volume)
+                .append(volumeUnit)
                 .append(weight)
                 .append(weightUnit)
                 .append(length)
@@ -340,8 +367,7 @@ public class Cargo {
                 .append(dimensionUnit)
                 .append(containerType)
                 .append(bulkType)
-                .append(price)
-                .append(currency)
+                .append(expiry)
                 .append(created)
                 .append(lastModified)
                 .toHashCode();
@@ -360,22 +386,23 @@ public class Cargo {
         final Cargo that = (Cargo) o;
         return new EqualsBuilder()
                 .append(id, that.id)
-                .append(ship, that.ship)
-                .append(shipment, that.shipment)
+                .append(contract, that.contract)
                 .append(userId, that.userId)
                 .append(status, that.status)
                 .append(cargoType, that.cargoType)
                 .append(quantity, that.quantity)
+                .append(departure, that.departure)
+                .append(volume, that.volume)
+                .append(volumeUnit, that.volumeUnit)
                 .append(weight, that.weight)
-                .append(weightUnit, that.quantity)
+                .append(weightUnit, that.weightUnit)
                 .append(length, that.length)
                 .append(width, that.width)
                 .append(height, that.height)
                 .append(dimensionUnit, that.dimensionUnit)
                 .append(containerType, that.containerType)
                 .append(bulkType, that.bulkType)
-                .append(price, that.price)
-                .append(currency, that.currency)
+                .append(expiry, that.expiry)
                 .append(created, that.created)
                 .append(lastModified, that.lastModified)
                 .isEquals();
@@ -385,22 +412,23 @@ public class Cargo {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("id", id)
-                .append("ship", ship)
-                .append("shipment", shipment)
+                .append("contract", contract)
                 .append("userId", userId)
                 .append("status", status)
                 .append("cargoType", cargoType)
                 .append("quantity", quantity)
+                .append("departure", departure)
+                .append("volume", volume)
+                .append("volumeUnit", volumeUnit)
                 .append("weight", weight)
-                .append("weightUnit", quantity)
+                .append("weightUnit", weightUnit)
                 .append("length", length)
                 .append("width", width)
                 .append("height", height)
                 .append("dimensionUnit", dimensionUnit)
                 .append("containerType", containerType)
                 .append("bulkType", bulkType)
-                .append("price", price)
-                .append("currency", currency)
+                .append("expiry", expiry)
                 .append("created", created)
                 .append("lastModified", lastModified)
                 .toString();

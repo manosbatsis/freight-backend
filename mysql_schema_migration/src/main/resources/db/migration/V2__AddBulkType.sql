@@ -33,3 +33,16 @@ VALUES
 ('Cranes', 'CRANES'),
 ('Foundation Pile', 'FOUNDATION_PILE'),
 ('Precast Construction', 'PRECAST_CONSTRUCTION');
+
+INSERT INTO `ShipType` (`displayName`, `type`)
+VALUES
+('TB', 'Tug Boat'),
+('BG', 'Barge'),
+('LCT', 'LCT'),
+('SPOB', 'Self Propelled Oil Barge'),
+('SPB', 'Self Propelled Barge'),
+('TANKER', 'Tanker'),
+('CS', 'Container Ship'),
+('MV', 'Bulk Carrier Mother Vessel'),
+('DCS', 'Dry Cargo Ship'),
+('RORO', 'Roll On Roll Off Ferry');

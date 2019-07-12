@@ -2,7 +2,7 @@ package com.freight.view;
 
 import com.freight.model.Cargo;
 
-import java.math.BigDecimal;
+import java.time.Instant;
 
 
 /**
@@ -18,10 +18,6 @@ public class CargoView {
 
     public int getId() {
         return cargo.getId();
-    }
-
-    public ShipmentView getShipment() {
-        return cargo.getShipment() != null ? new ShipmentView(cargo.getShipment()) : null;
     }
 
     public int getUserId() {
@@ -40,12 +36,24 @@ public class CargoView {
         return cargo.getQuantity();
     }
 
+    public Instant getDeparture() {
+        return cargo.getDeparture();
+    }
+
     public Integer getWeight() {
         return cargo.getWeight();
     }
 
     public Cargo.WeightUnit getWeightUnit() {
         return cargo.getWeightUnit();
+    }
+
+    public Integer getVolume() {
+        return cargo.getVolume();
+    }
+
+    public Cargo.VolumeUnit getVolumeUnit() {
+        return cargo.getVolumeUnit();
     }
 
     public Integer getLength() {
@@ -70,13 +78,5 @@ public class CargoView {
 
     public BulkTypeView getBulkType() {
         return cargo.getBulkType() != null ? new BulkTypeView(cargo.getBulkType()) : null;
-    }
-
-    public BigDecimal getPrice() {
-        return cargo.getPrice();
-    }
-
-    public String getCurrency() {
-        return cargo.getCurrency();
     }
 }

@@ -20,11 +20,11 @@ public class ShipmentRequestBody implements Serializable {
     @ApiModelProperty(value = "Destination port id")
     private int destinationPortId;
 
-    @ApiModelProperty(value = "Estimated departure time in epoch seconds")
-    private long estimatedDeparture;
+    @ApiModelProperty(value = "Departure date in epoch seconds")
+    private long departure;
 
-    @ApiModelProperty(value = "Estimated arrival time in epoch seconds")
-    private long estimatedArrival;
+    @ApiModelProperty(value = "Arrival date in epoch seconds")
+    private long arrival;
 
     public int getShipId() {
         return shipId;
@@ -38,11 +38,11 @@ public class ShipmentRequestBody implements Serializable {
         return destinationPortId;
     }
 
-    public long getEstimatedDeparture() {
-        return estimatedDeparture;
+    public long getDeparture() {
+        return departure;
     }
 
-    public long getEstimatedArrival() {
-        return estimatedArrival;
+    public long getArrival() {
+        return arrival;
     }
 }

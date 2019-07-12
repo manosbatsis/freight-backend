@@ -4,14 +4,14 @@ import com.freight.model.BulkType;
 import com.freight.model.Cargo;
 import com.freight.model.CargoType;
 import com.freight.model.ContainerType;
-import com.freight.model.Shipment;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
-import static com.freight.exception.BadRequest.SHIPMENT_NOT_EXIST;
-import static com.freight.util.AssertUtil.assertNotNull;
 
 /**
  * Created by toshikijahja on 6/7/17.
@@ -23,28 +23,30 @@ public class CargoDao extends BaseDao<Cargo> {
         super(sessionProvider, Cargo.class);
     }
 
-    public Cargo createCargo(final Shipment shipment,
-                             final int userId,
+    public Cargo createCargo(final int userId,
                              final CargoType cargoType,
                              final int quantity,
+                             final Instant departure,
                              final Optional<Integer> weightOptional,
                              final Cargo.WeightUnit weightUnit,
+                             final Optional<Integer> volumeOptional,
+                             final Cargo.VolumeUnit volumeUnit,
                              final Optional<Integer> lengthOptional,
                              final Optional<Integer> widthOptional,
                              final Optional<Integer> heightOptional,
                              final Cargo.DimensionUnit dimensionUnit,
                              final Optional<ContainerType> containerTypeOptional,
                              final Optional<BulkType> bulkTypeOptional) {
-        assertNotNull(shipment, SHIPMENT_NOT_EXIST);
         getSessionProvider().startTransaction();
         final Cargo cargo = new Cargo.Builder()
-                .shipment(shipment)
-                .ship(shipment.getShip())
                 .userId(userId)
                 .cargoType(cargoType)
                 .quantity(quantity)
+                .departure(departure)
                 .weight(weightOptional.map(weight -> weight).orElse(null))
                 .weightUnit(weightUnit)
+                .volume(volumeOptional.map(volume -> volume).orElse(null))
+                .volumeUnit(volumeUnit)
                 .length(lengthOptional.map(length -> length).orElse(null))
                 .width(widthOptional.map(width -> width).orElse(null))
                 .height(heightOptional.map(height -> height).orElse(null))
@@ -55,5 +57,12 @@ public class CargoDao extends BaseDao<Cargo> {
         getSessionProvider().getSession().persist(cargo);
         getSessionProvider().commitTransaction();
         return cargo;
+    }
+
+    public List<Cargo> getByUserIdAndStatus(final int userId, final Cargo.Status status) {
+        final Map<String, Object> inputParams = new HashMap<>();
+        inputParams.put("userId", userId);
+        inputParams.put("status", status.name());
+        return getByFields("userId = :userId AND status = :status", inputParams);
     }
 }

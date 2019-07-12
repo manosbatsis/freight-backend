@@ -32,12 +32,12 @@ public class ShipmentView {
         return new PortView(shipment.getDestinationPort());
     }
 
-    public Instant getEstimatedDeparture() {
-        return shipment.getEstimatedDeparture();
+    public Instant getDeparture() {
+        return shipment.getDeparture();
     }
 
-    public Instant getEstimatedArrival() {
-        return shipment.getEstimatedArrival();
+    public Instant getArrival() {
+        return shipment.getArrival();
     }
 
     public Shipment.Status getStatus() {
