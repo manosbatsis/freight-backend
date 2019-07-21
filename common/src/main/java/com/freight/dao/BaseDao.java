@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.freight.util.QueryUtil.listObjectToSqlQuery;
-import static com.freight.util.QueryUtil.listStringToSqlQuery;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
@@ -88,14 +86,6 @@ public class BaseDao<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<T> getByFieldStringList(final String field, final List<String> data) {
-        requireNonNull(field);
-        final Query query = getSessionProvider().getSession().createQuery(
-                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listStringToSqlQuery(data));
-        return query.list();
-    }
-
-    @SuppressWarnings("unchecked")
     protected List<T> getByFieldSorted(final String field,
                                        final Object data,
                                        final String sortField,
@@ -110,56 +100,22 @@ public class BaseDao<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<T> getByFieldSorted(final String field,
-                                       final List<Integer> dataList,
-                                       final String sortField,
-                                       final Sort sort) {
-        if (dataList.isEmpty()) {
-            return emptyList();
-        }
-        requireNonNull(field);
-        requireNonNull(sortField);
-        requireNonNull(sort);
-        final Query query = getSessionProvider().getSession().createQuery(
-                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listObjectToSqlQuery(dataList)
-                        + " ORDER BY " + sortField + " " + sort);
-        return query.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected List<T> getByFieldSortedAndPaginated(final String field,
-                                                   final Object data,
+    protected List<T> getByFieldSortedAndPaginated(final String whereQuery,
+                                                   final Map<String, Object> inputParam,
                                                    final String sortField,
                                                    final Sort sort,
                                                    final int start,
                                                    final int limit) {
-        requireNonNull(field);
-        requireNonNull(sortField);
-        requireNonNull(sort);
-        final Query query = getSessionProvider().getSession().createQuery(
-                "FROM " + clazz.getName() + " WHERE " + field + " = :" + DATA + " ORDER BY " + sortField + " " + sort);
-        query.setParameter(DATA, data);
-        query.setFirstResult(start);
-        query.setMaxResults(limit);
-        return query.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected List<T> getByFieldSortedAndPaginated(final String field,
-                                                   final List<Integer> dataList,
-                                                   final String sortField,
-                                                   final Sort sort,
-                                                   final int start,
-                                                   final int limit) {
-        if (dataList.isEmpty()) {
+        if (inputParam.isEmpty()) {
             return emptyList();
         }
-        requireNonNull(field);
+        requireNonNull(whereQuery);
+        requireNonNull(inputParam);
         requireNonNull(sortField);
         requireNonNull(sort);
         final Query query = getSessionProvider().getSession().createQuery(
-                "FROM " + clazz.getName() + " WHERE " + field + " IN " + listObjectToSqlQuery(dataList)
-                        + " ORDER BY " + sortField + " " + sort);
+                "FROM " + clazz.getName() + " WHERE " + whereQuery + " ORDER BY " + sortField + " " + sort);
+        inputParam.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         query.setFirstResult(start);
         query.setMaxResults(limit);
         return query.list();

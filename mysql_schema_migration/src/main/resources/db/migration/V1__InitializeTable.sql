@@ -5,7 +5,7 @@ CREATE TABLE `User` (
   `email` varchar(512) DEFAULT NULL,
   `phone` int(36) unsigned DEFAULT NULL,
   `companyId` int(11) unsigned DEFAULT NULL,
-  `type` enum('CUSTOMER', 'TRANSPORTER' ,'CUSTOMER_TRANSPORTER', 'NOT_KNOWN') CHARACTER SET utf8 NOT NULL DEFAULT 'NOT_KNOWN',
+  `type` enum('CUSTOMER', 'TRANSPORTER', 'NOT_KNOWN') CHARACTER SET utf8 NOT NULL DEFAULT 'NOT_KNOWN',
   `status` enum('ACTIVE', 'INACTIVE') CHARACTER SET utf8 NOT NULL DEFAULT 'ACTIVE',
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -117,11 +117,6 @@ CREATE TABLE `BulkType` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `BulkType` (`displayName`, `type`)
-VALUES
-	('Coal', 'COAL'),
-	('Sand', 'SAND');
-
 CREATE TABLE `Cargo` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `contractId` int(11) unsigned DEFAULT NULL,
@@ -182,16 +177,22 @@ CREATE TABLE `Contract` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `shipId` int(11) unsigned DEFAULT NULL,
   `userId` int(11) unsigned NOT NULL,
-  `price` decimal(11,2) DEFAULT NULL,
+  `price` decimal(15,2) DEFAULT NULL,
   `priceUnit` enum('KG', 'TON', 'LB', 'M3', 'NOT_USED') CHARACTER SET utf8 NOT NULL DEFAULT 'NOT_USED',
   `currency` varchar(5) DEFAULT 'RP',
+  `payoutId` int(11) unsigned DEFAULT NULL,
   `startDate` date DEFAULT NULL,
   `endDate` date DEFAULT NULL,
   `charterType` enum('CHARTER', 'LUMPSUM') CHARACTER SET utf8 NOT NULL DEFAULT 'CHARTER',
   `loadingType` enum('FIOST', 'FILO', 'LIFO') CHARACTER SET utf8 NOT NULL DEFAULT 'FIOST',
-  `cargoInsurance` enum('CUSTOMER', 'TRANSPORTER') CHARACTER SET utf8 NOT NULL DEFAULT 'CUSTOMER',
-  `shipInsurance` enum('CUSTOMER', 'TRANSPORTER') CHARACTER SET utf8 NOT NULL DEFAULT 'TRANSPORTER',
-  `agent` enum('CUSTOMER', 'TRANSPORTER') CHARACTER SET utf8 NOT NULL DEFAULT 'TRANSPORTER',
+  `incotermsId` int(11) unsigned DEFAULT NULL,
+  `cargoSender` enum('AS_ORDER', 'SHIP_OWNER', 'CARGO_OWNER', 'OTHER_PARTY') CHARACTER SET utf8 NOT NULL DEFAULT 'AS_ORDER',
+  `cargoSenderOther` varchar(512) DEFAULT NULL,
+  `cargoReceiver` enum('AS_ORDER', 'SHIP_OWNER', 'CARGO_OWNER', 'OTHER_PARTY') CHARACTER SET utf8 NOT NULL DEFAULT 'AS_ORDER',
+  `cargoReceiverOther` varchar(512) DEFAULT NULL,
+  `cargoInsurance` enum('CUSTOMER', 'TRANSPORTER', 'NONE') CHARACTER SET utf8 NOT NULL DEFAULT 'NONE',
+  `shipInsurance` enum('CUSTOMER', 'TRANSPORTER', 'NONE') CHARACTER SET utf8 NOT NULL DEFAULT 'NONE',
+  `shipAgentId` int(11) unsigned DEFAULT NULL,
   `miscellaneousFee` enum('CUSTOMER', 'TRANSPORTER') CHARACTER SET utf8 NOT NULL DEFAULT 'TRANSPORTER',
   `demurrage` decimal(11,2) DEFAULT NULL,
   `demurrageUnit` enum('HOUR', 'DAY', 'WEEK', 'NOT_USED') CHARACTER SET utf8 NOT NULL DEFAULT 'NOT_USED',
@@ -207,13 +208,44 @@ CREATE TABLE `Contract` (
   KEY (`shipId`, `userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `ShipAgent` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `assigner` enum('CUSTOMER', 'TRANSPORTER') CHARACTER SET utf8 NOT NULL DEFAULT 'CUSTOMER',
+  `customerShare` decimal(11,2) NOT NULL,
+  `transporterShare` decimal(11,2) NOT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `Incoterms` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `displayName` varchar(256) DEFAULT NULL,
+  `type` varchar(128) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `Payout` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `contractSigned` decimal(11,2) DEFAULT 0,
+  `dockedOrigin` decimal(11,2) DEFAULT 0,
+  `loaded` decimal(11,2) DEFAULT 0,
+  `dockedDestination` decimal(11,2) DEFAULT 0,
+  `discharged` decimal(11,2) DEFAULT 0,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `CargoContract` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `cargoId` int(11) unsigned NOT NULL,
   `contractId` int(11) unsigned NOT NULL,
   `customerId` int(11) unsigned NOT NULL,
   `transporterId` int(11) unsigned NOT NULL,
-  `status` enum('TRANSPORTER_OFFERED', 'CUSTOMER_ACCEPT', 'CUSTOMER_DECLINE', 'CUSTOMER_NEGOTIATE', 'CANCELED', 'CUSTOMER_EXPIRED', 'TRANSPORTER_EXPIRED') CHARACTER SET utf8 NOT NULL DEFAULT 'TRANSPORTER_OFFERED',
+  `status` enum('TRANSPORTER_OFFERED', 'CUSTOMER_ACCEPTED', 'CUSTOMER_DECLINED', 'CUSTOMER_NEGOTIATE', 'CANCELED', 'CUSTOMER_EXPIRED', 'TRANSPORTER_EXPIRED') CHARACTER SET utf8 NOT NULL DEFAULT 'TRANSPORTER_OFFERED',
   `expiry` timestamp NULL DEFAULT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -226,3 +258,27 @@ VALUES
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES
 	(1, '03b3dab9-3bde-4e3b-a1e8-4573aad4665b', NULL, 'toshikijahja@gmail.com', NULL, NULL, 'NOT_KNOWN', 'ACTIVE', '2019-07-08 01:46:59', '2019-07-08 01:46:59');
+
+INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
+VALUES
+	(2, '03b3dab5-3bd3-4e3b-a1e8-4573fad4665b', NULL, 'toshikijahja@gmail.com', NULL, 1, 'TRANSPORTER', 'ACTIVE', '2019-07-15 21:31:51', '2019-07-15 21:32:22');
+
+INSERT INTO `Company` (`id`, `name`, `type`, `status`, `created`, `lastModified`)
+VALUES
+	(1, 'PT Perahu Abadi', 'TRANSPORTER', 'UNVERIFIED', '2019-07-15 21:31:38', '2019-07-15 21:31:41');
+
+INSERT INTO `Ship` (`id`, `name`, `companyId`, `shipTypeId`, `yearBuilt`, `grossTonnage`, `status`, `created`, `lastModified`)
+VALUES
+	(1, 'Perahu A1', 1, 2, 1935, 1000, 'ACTIVE', '2019-07-15 21:33:39', '2019-07-15 21:33:51');
+
+INSERT INTO `Contract` (`id`, `shipId`, `userId`, `price`, `priceUnit`, `currency`, `payoutId`, `startDate`, `endDate`, `charterType`, `loadingType`, `incotermsId`, `cargoSender`, `cargoSenderOther`, `cargoReceiver`, `cargoReceiverOther`, `cargoInsurance`, `shipInsurance`, `shipAgentId`, `miscellaneousFee`, `demurrage`, `demurrageUnit`, `loadingLaytime`, `dischargeLaytime`, `totalLaytime`, `laytimeUnit`, `despatchType`, `layDaysType`, `created`, `lastModified`)
+VALUES
+	(1, 1, 2, 500000000.00, 'NOT_USED', 'RP', NULL, NULL, NULL, 'CHARTER', 'FIOST', NULL, 'AS_ORDER', NULL, 'AS_ORDER', NULL, 'NONE', 'NONE', NULL, 'TRANSPORTER', NULL, 'NOT_USED', NULL, NULL, NULL, 'NOT_USED', 'NOT_USED', 'NOT_USED', '2019-07-15 21:33:27', '2019-07-15 21:34:11');
+
+INSERT INTO `Cargo` (`id`, `contractId`, `userId`, `status`, `cargoTypeId`, `quantity`, `departure`, `weight`, `weightUnit`, `volume`, `volumeUnit`, `length`, `width`, `height`, `dimensionUnit`, `containerTypeId`, `bulkTypeId`, `expiry`, `created`, `lastModified`)
+VALUES
+	(1, 1, 1, 'INQUIRY', 3, 1, NULL, 3000, 'TON', 3041, 'M3', NULL, NULL, NULL, 'NOT_USED', NULL, 4, NULL, '2019-07-15 22:08:05', '2019-07-15 22:08:27');
+
+INSERT INTO `CargoContract` (`id`, `cargoId`, `contractId`, `customerId`, `transporterId`, `status`, `expiry`, `created`, `lastModified`)
+VALUES
+	(1, 1, 1, 1, 2, 'TRANSPORTER_OFFERED', NULL, '2019-07-15 22:08:48', '2019-07-15 22:08:48');

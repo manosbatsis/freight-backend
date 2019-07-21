@@ -46,3 +46,17 @@ VALUES
 ('MV', 'Bulk Carrier Mother Vessel'),
 ('DCS', 'Dry Cargo Ship'),
 ('RORO', 'Roll On Roll Off Ferry');
+
+INSERT INTO `Incoterms` (`displayName`, `type`)
+VALUES
+('FOB', 'Free On Board'),
+('CFR', 'Cost And Freight'),
+('CIF', 'Cost, Insurance and Freight'),
+('FAS', 'Free Alongside Ship'),
+('EXW', 'Ex Works'),
+('FCA', 'Free Carrier'),
+('CPT', 'Carriage Paid To'),
+('CIP', 'Carriage And Insurance Paid To'),
+('DAT', 'Delivered At Terminal'),
+('DAP', 'Delivered At Place'),
+('DDP', 'Delivered Duty Paid');
