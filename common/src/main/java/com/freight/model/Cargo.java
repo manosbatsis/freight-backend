@@ -1,5 +1,6 @@
 package com.freight.model;
 
+import com.freight.exception.FreightException;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.Instant;
 
+import static com.freight.exception.BadRequest.CARGO_STATUS_NOT_EXIST;
 import static com.freight.model.Cargo.Status.INQUIRY;
 
 /**
@@ -106,7 +108,16 @@ public class Cargo {
         DELIVERED,
         DELAYED,
         CANCELED,
-        EXPIRED
+        EXPIRED;
+
+        public static Status getStatus(final String statusInString) {
+            for (final Status status : Status.values()) {
+                if (status.name().equalsIgnoreCase(statusInString)) {
+                    return status;
+                }
+            }
+            throw new FreightException(CARGO_STATUS_NOT_EXIST);
+        }
     }
 
     public enum WeightUnit {

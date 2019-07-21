@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.freight.dao.BaseDao.Sort.DESC;
+import static java.util.Objects.requireNonNull;
+
 /**
  * Created by toshikijahja on 6/7/17.
  */
@@ -59,10 +62,16 @@ public class CargoDao extends BaseDao<Cargo> {
         return cargo;
     }
 
-    public List<Cargo> getByUserIdAndStatus(final int userId, final Cargo.Status status) {
-        final Map<String, Object> inputParams = new HashMap<>();
-        inputParams.put("userId", userId);
-        inputParams.put("status", status.name());
-        return getByFields("userId = :userId AND status = :status", inputParams);
+    public List<Cargo> getByUserIdAndStatusSortedAndPaginated(final int userId,
+                                                              final Cargo.Status status,
+                                                              final int start,
+                                                              final int limit) {
+        requireNonNull(status);
+
+        final Map<String, Object> inputParam = new HashMap<>();
+        inputParam.put("userId", userId);
+        inputParam.put("status", status);
+
+        return getByFieldSortedAndPaginated("userId = :userId AND status = :status", inputParam, "id", DESC, start, limit);
     }
 }

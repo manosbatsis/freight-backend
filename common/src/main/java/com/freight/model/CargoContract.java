@@ -55,8 +55,8 @@ public class CargoContract {
 
     public enum Status {
         TRANSPORTER_OFFERED,
-        CUSTOMER_ACCEPT,
-        CUSTOMER_DECLINE,
+        CUSTOMER_ACCEPTED,
+        CUSTOMER_DECLINED,
         CUSTOMER_NEGOTIATE,
         CANCELED,
         CUSTOMER_EXPIRED,

@@ -56,6 +56,7 @@ public class ConfigResource {
                     .bulkTypes(bulkTypeViews)
                     .containerTypes(containerTypeViews)
                     .weightUnits(asList(Cargo.WeightUnit.values()))
+                    .volumeUnits(asList(Cargo.VolumeUnit.values()))
                     .dimensionUnits(asList(Cargo.DimensionUnit.values()))
                     .build();
         }

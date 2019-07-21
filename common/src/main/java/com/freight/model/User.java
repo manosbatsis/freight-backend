@@ -62,7 +62,6 @@ public class User {
     public enum Type {
         CUSTOMER,
         TRANSPORTER,
-        CUSTOMER_TRANSPORTER,
         NOT_KNOWN
     }
 

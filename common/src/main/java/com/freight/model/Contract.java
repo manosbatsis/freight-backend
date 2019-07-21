@@ -47,6 +47,10 @@ public class Contract {
     @Column
     private String currency;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payoutId")
+    private Payout payout;
+
     @Column
     private Instant startDate;
 
@@ -61,17 +65,35 @@ public class Contract {
     @Enumerated(EnumType.STRING)
     private LoadingType loadingType;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Type cargoInsurance;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "incotermsId")
+    private Incoterms incoterms;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Type shipInsurance;
+    private CargoHandler cargoSender;
+
+    @Column
+    private String cargoSenderOther;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Type agent;
+    private CargoHandler cargoReceiver;
+
+    @Column
+    private String cargoReceiverOther;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private InsuranceProvider cargoInsurance;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private InsuranceProvider shipInsurance;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shipAgentId")
+    private ShipAgent shipAgent;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -132,6 +154,19 @@ public class Contract {
         LIFO
     }
 
+    public enum CargoHandler {
+        AS_ORDER,
+        SHIP_OWNER,
+        CARGO_OWNER,
+        OTHER_PARTY
+    }
+
+    public enum InsuranceProvider {
+        CUSTOMER,
+        TRANSPORTER,
+        NONE
+    }
+
     public enum DespatchType {
         DHALFD,
         DDO,
@@ -157,13 +192,15 @@ public class Contract {
         this.price = builder.price;
         this.priceUnit = builder.priceUnit;
         this.currency = builder.currency;
+        this.payout = builder.payout;
         this.startDate = builder.startDate;
         this.endDate = builder.endDate;
         this.charterType = builder.charterType;
         this.loadingType = builder.loadingType;
+        this.incoterms = builder.incoterms;
         this.cargoInsurance = builder.cargoInsurance;
-        this.shipInsurance = builder.shipInsunrace;
-        this.agent = builder.agent;
+        this.shipInsurance = builder.shipInsurance;
+        this.shipAgent = builder.shipAgent;
         this.miscellaneousFee = builder.miscellaneousFee;
         this.demurrage = builder.demurrage;
         this.demurrageUnit = builder.demurrageUnit;
@@ -223,6 +260,14 @@ public class Contract {
         this.currency = currency;
     }
 
+    public Payout getPayout() {
+        return payout;
+    }
+
+    public void setPayout(final Payout payout) {
+        this.payout = payout;
+    }
+
     public Instant getStartDate() {
         return startDate;
     }
@@ -255,28 +300,68 @@ public class Contract {
         this.loadingType = loadingType;
     }
 
-    public Type getCargoInsurance() {
+    public Incoterms getIncoterms() {
+        return incoterms;
+    }
+
+    public void setIncoterms(final Incoterms incoterms) {
+        this.incoterms = incoterms;
+    }
+
+    public CargoHandler getCargoSender() {
+        return cargoSender;
+    }
+
+    public void setCargoSender(final CargoHandler cargoSender) {
+        this.cargoSender = cargoSender;
+    }
+
+    public String getCargoSenderOther() {
+        return cargoSenderOther;
+    }
+
+    public void setCargoSenderOther(final String cargoSenderOther) {
+        this.cargoSenderOther = cargoSenderOther;
+    }
+
+    public CargoHandler getCargoReceiver() {
+        return cargoReceiver;
+    }
+
+    public void setCargoReceiver(final CargoHandler cargoReceiver) {
+        this.cargoReceiver = cargoReceiver;
+    }
+
+    public String getCargoReceiverOther() {
+        return cargoReceiverOther;
+    }
+
+    public void setCargoReceiverOther(final String cargoReceiverOther) {
+        this.cargoReceiverOther = cargoReceiverOther;
+    }
+
+    public InsuranceProvider getCargoInsurance() {
         return cargoInsurance;
     }
 
-    public void setCargoInsurance(final Type cargoInsurance) {
+    public void setCargoInsurance(final InsuranceProvider cargoInsurance) {
         this.cargoInsurance = cargoInsurance;
     }
 
-    public Type getShipInsurance() {
+    public InsuranceProvider getShipInsurance() {
         return shipInsurance;
     }
 
-    public void setShipInsurance(final Type shipInsurance) {
+    public void setShipInsurance(final InsuranceProvider shipInsurance) {
         this.shipInsurance = shipInsurance;
     }
 
-    public Type getAgent() {
-        return agent;
+    public ShipAgent getShipAgent() {
+        return shipAgent;
     }
 
-    public void setAgent(final Type agent) {
-        this.agent = agent;
+    public void setShipAgent(final ShipAgent shipAgent) {
+        this.shipAgent = shipAgent;
     }
 
     public Type getMiscellaneousFee() {
@@ -364,24 +449,30 @@ public class Contract {
         private Ship ship;
         private int userId;
         private BigDecimal price;
-        private PriceUnit priceUnit;
+        private PriceUnit priceUnit = PriceUnit.NOT_USED;
         private String currency;
+        private Payout payout;
         private Instant startDate;
         private Instant endDate;
         private CharterType charterType;
         private LoadingType loadingType;
-        private Type cargoInsurance;
-        private Type shipInsunrace;
-        private Type agent;
+        private Incoterms incoterms;
+        private CargoHandler cargoSender;
+        private String cargoSenderOther;
+        private CargoHandler cargoReceiver;
+        private String cargoReceiverOther;
+        private InsuranceProvider cargoInsurance;
+        private InsuranceProvider shipInsurance;
+        private ShipAgent shipAgent;
         private Type miscellaneousFee;
         private BigDecimal demurrage;
-        private TimeUnit demurrageUnit;
+        private TimeUnit demurrageUnit = TimeUnit.NOT_USED;
         private Integer loadingLaytime;
         private Integer dischargeLaytime;
         private Integer totalLaytime;
-        private TimeUnit laytimeUnit;
-        private DespatchType despatchType;
-        private LayDaysType layDaysType;
+        private TimeUnit laytimeUnit = TimeUnit.NOT_USED;
+        private DespatchType despatchType = DespatchType.NOT_USED;
+        private LayDaysType layDaysType = LayDaysType.NOT_USED;
 
         public Builder id(final int id) {
             this.id = id;
@@ -413,6 +504,11 @@ public class Contract {
             return this;
         }
 
+        public Builder payout(final Payout payout) {
+            this.payout = payout;
+            return this;
+        }
+
         public Builder startDate(final Instant startDate) {
             this.startDate = startDate;
             return this;
@@ -433,18 +529,43 @@ public class Contract {
             return this;
         }
 
-        public Builder cargoInsurance(final Type cargoInsurance) {
+        public Builder incoterms(final Incoterms incoterms) {
+            this.incoterms = incoterms;
+            return this;
+        }
+
+        public Builder cargoSender(final CargoHandler cargoSender) {
+            this.cargoSender = cargoSender;
+            return this;
+        }
+
+        public Builder cargoSenderOther(final String cargoSenderOther) {
+            this.cargoSenderOther = cargoSenderOther;
+            return this;
+        }
+
+        public Builder cargoReceiver(final CargoHandler cargoReceiver) {
+            this.cargoReceiver = cargoReceiver;
+            return this;
+        }
+
+        public Builder cargoReceiverOther(final String cargoReceiverOther) {
+            this.cargoReceiverOther = cargoReceiverOther;
+            return this;
+        }
+
+        public Builder cargoInsurance(final InsuranceProvider cargoInsurance) {
             this.cargoInsurance = cargoInsurance;
             return this;
         }
 
-        public Builder shipInsunrace(final Type shipInsunrace) {
-            this.shipInsunrace = shipInsunrace;
+        public Builder shipInsurance(final InsuranceProvider shipInsurance) {
+            this.shipInsurance = shipInsurance;
             return this;
         }
 
-        public Builder agent(final Type agent) {
-            this.agent = agent;
+        public Builder shipAgent(final ShipAgent shipAgent) {
+            this.shipAgent = shipAgent;
             return this;
         }
 
@@ -507,13 +628,19 @@ public class Contract {
                 .append(price)
                 .append(priceUnit)
                 .append(currency)
+                .append(payout)
                 .append(startDate)
                 .append(endDate)
                 .append(charterType)
                 .append(loadingType)
+                .append(incoterms)
+                .append(cargoSender)
+                .append(cargoSenderOther)
+                .append(cargoReceiver)
+                .append(cargoReceiverOther)
                 .append(cargoInsurance)
                 .append(shipInsurance)
-                .append(agent)
+                .append(shipAgent)
                 .append(miscellaneousFee)
                 .append(demurrage)
                 .append(demurrageUnit)
@@ -546,13 +673,19 @@ public class Contract {
                 .append(price, that.price)
                 .append(priceUnit, that.priceUnit)
                 .append(currency, that.currency)
+                .append(payout, that.payout)
                 .append(startDate, that.startDate)
                 .append(endDate, that.endDate)
                 .append(charterType, that.charterType)
                 .append(loadingType, that.loadingType)
+                .append(incoterms, that.incoterms)
+                .append(cargoSender, that.cargoSender)
+                .append(cargoSenderOther, that.cargoSenderOther)
+                .append(cargoReceiver, that.cargoReceiver)
+                .append(cargoReceiverOther, that.cargoReceiverOther)
                 .append(cargoInsurance, that.cargoInsurance)
                 .append(shipInsurance, that.shipInsurance)
-                .append(agent, that.agent)
+                .append(shipAgent, that.shipAgent)
                 .append(miscellaneousFee, that.miscellaneousFee)
                 .append(demurrage, that.demurrage)
                 .append(demurrageUnit, that.demurrageUnit)
@@ -576,13 +709,19 @@ public class Contract {
                 .append("price", price)
                 .append("priceUnit", priceUnit)
                 .append("currency", currency)
+                .append("payout", payout)
                 .append("startDate", startDate)
                 .append("endDate", endDate)
                 .append("charterType", charterType)
                 .append("loadingType", loadingType)
+                .append("incoterms", incoterms)
+                .append("cargoSender", cargoSender)
+                .append("cargoSenderOther", cargoSenderOther)
                 .append("cargoInsurance", cargoInsurance)
+                .append("cargoReceiver", cargoReceiver)
+                .append("cargoReceiverOther", cargoReceiverOther)
                 .append("shipInsurance", shipInsurance)
-                .append("agent", agent)
+                .append("shipAgent", shipAgent)
                 .append("miscellaneousFee", miscellaneousFee)
                 .append("demurrage", demurrage)
                 .append("demurrageUnit", demurrageUnit)

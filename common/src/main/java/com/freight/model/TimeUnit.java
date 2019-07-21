@@ -6,5 +6,6 @@ package com.freight.model;
 public enum TimeUnit {
     HOUR,
     DAY,
-    WEEK
+    WEEK,
+    NOT_USED
 }

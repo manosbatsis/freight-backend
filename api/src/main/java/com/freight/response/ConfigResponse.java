@@ -19,6 +19,7 @@ public class ConfigResponse extends BaseResponse {
     private final List<BulkTypeView> bulkTypes;
     private final List<ContainerTypeView> containerTypes;
     private final List<Cargo.WeightUnit> weightUnits;
+    private final List<Cargo.VolumeUnit> volumeUnits;
     private final List<Cargo.DimensionUnit> dimensionUnits;
 
     public ConfigResponse(final Builder builder) {
@@ -26,6 +27,7 @@ public class ConfigResponse extends BaseResponse {
         this.bulkTypes = builder.bulkTypes;
         this.containerTypes = builder.containerTypes;
         this.weightUnits = builder.weightUnits;
+        this.volumeUnits = builder.volumeUnits;
         this.dimensionUnits = builder.dimensionUnits;
     }
 
@@ -45,6 +47,10 @@ public class ConfigResponse extends BaseResponse {
         return weightUnits;
     }
 
+    public List<Cargo.VolumeUnit> getVolumeUnits() {
+        return volumeUnits;
+    }
+
     public List<Cargo.DimensionUnit> getDimensionUnits() {
         return dimensionUnits;
     }
@@ -54,6 +60,7 @@ public class ConfigResponse extends BaseResponse {
         private List<BulkTypeView> bulkTypes = emptyList();
         private List<ContainerTypeView> containerTypes = emptyList();
         private List<Cargo.WeightUnit> weightUnits = emptyList();
+        private List<Cargo.VolumeUnit> volumeUnits = emptyList();
         private List<Cargo.DimensionUnit> dimensionUnits = emptyList();
 
         public Builder cargoTypes(final List<CargoTypeView> cargoTypes) {
@@ -73,6 +80,11 @@ public class ConfigResponse extends BaseResponse {
 
         public Builder weightUnits(final List<Cargo.WeightUnit> weightUnits) {
             this.weightUnits = weightUnits;
+            return this;
+        }
+
+        public Builder volumeUnits(final List<Cargo.VolumeUnit> volumeUnits) {
+            this.volumeUnits = volumeUnits;
             return this;
         }
 
