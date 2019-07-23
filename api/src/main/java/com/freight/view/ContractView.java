@@ -1,9 +1,8 @@
 package com.freight.view;
 
+import com.freight.model.CargoContract;
 import com.freight.model.Contract;
-import com.freight.model.Incoterms;
 import com.freight.model.Payout;
-import com.freight.model.ShipAgent;
 import com.freight.model.TimeUnit;
 import com.freight.model.Type;
 
@@ -17,9 +16,12 @@ import java.time.Instant;
 public class ContractView {
 
     private final Contract contract;
+    private final CargoContract cargoContract;
 
-    public ContractView(final Contract contract) {
+    public ContractView(final Contract contract,
+                        final CargoContract cargoContract) {
         this.contract = contract;
+        this.cargoContract = cargoContract;
     }
 
     public int getId() {
@@ -66,8 +68,8 @@ public class ContractView {
         return contract.getLoadingType();
     }
 
-    public Incoterms getIncoterms() {
-        return contract.getIncoterms();
+    public IncotermsView getIncoterms() {
+        return new IncotermsView(contract.getIncoterms());
     }
 
     public Contract.CargoHandler getCargoSender() {
@@ -94,8 +96,8 @@ public class ContractView {
         return contract.getShipInsurance();
     }
 
-    public ShipAgent getShipAgent() {
-        return contract.getShipAgent();
+    public ShipAgentView getShipAgent() {
+        return new ShipAgentView(contract.getShipAgent());
     }
 
     public Type getMiscellaneousFee() {
@@ -132,5 +134,33 @@ public class ContractView {
 
     public Contract.LayDaysType getLayDaysType() {
         return contract.getLayDaysType();
+    }
+
+    public int getCargoContractId() {
+        return cargoContract.getId();
+    }
+
+    public int getCargoId() {
+        return cargoContract.getCargoId();
+    }
+
+    public int getContractId() {
+        return cargoContract.getContractId();
+    }
+
+    public int getCustomerId() {
+        return cargoContract.getCustomerId();
+    }
+
+    public int getTransporterId() {
+        return cargoContract.getTransporterId();
+    }
+
+    public CargoContract.Status getStatus() {
+        return cargoContract.getStatus();
+    }
+
+    public Instant getExpiry() {
+        return cargoContract.getExpiry();
     }
 }
