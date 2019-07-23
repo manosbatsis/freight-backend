@@ -29,11 +29,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static com.freight.exception.BadRequest.CARGO_NOT_EXIST;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Api(tags = {"user"})
 @Path("/contract")
@@ -70,9 +73,13 @@ public class ContractResource {
             }
 
             final List<CargoContract> cargoContracts = cargoContractDao.getByCargoIdSortedAndPaginated(cargoId, start, limit);
+            final Map<Integer, CargoContract> cargoContractsByContractId = cargoContracts.stream()
+                    .collect(toMap(CargoContract::getContractId, Function.identity()));
             final List<Integer> contractIds = cargoContracts.stream().map(CargoContract::getContractId).collect(toList());
             final List<Contract> contracts = contractDao.getByIds(contractIds);
-            final List<ContractView> contractViews = contracts.stream().map(ContractView::new).collect(toList());
+            final List<ContractView> contractViews = contracts.stream()
+                    .map(contract -> new ContractView(contract, cargoContractsByContractId.get(contract.getId())))
+                    .collect(toList());
 
             return new ContractListResponse(contractViews);
         }
