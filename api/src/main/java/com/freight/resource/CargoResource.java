@@ -50,6 +50,7 @@ import static com.freight.exception.BadRequest.LCL_INPUT_EMPTY;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.BadRequest.VOLUME_EMPTY;
 import static com.freight.exception.BadRequest.WEIGHT_EMPTY;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"user"})
@@ -79,7 +80,7 @@ public class CargoResource {
     @ApiOperation(value = "Get list of cargo by status")
     @Produces(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public CargoListResponse getCargoByStatus(@DefaultValue("inquiry") @QueryParam("status") final String status,
+    public CargoListResponse getCargoByStatus(@DefaultValue("inquiry") @QueryParam("status") final String statusList,
                                               @DefaultValue("0") @QueryParam("start") final int start,
                                               @DefaultValue("20") @QueryParam("limit") final int limit) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
@@ -89,8 +90,11 @@ public class CargoResource {
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
                     .orElseThrow(() -> new FreightException(USER_NOT_EXIST));
 
-            final Cargo.Status cargoStatus = Cargo.Status.getStatus(status);
-            final List<Cargo> cargos = cargoDao.getByUserIdAndStatusSortedAndPaginated(user.getId(), cargoStatus, start, limit);
+            final List<String> statusListString = asList(statusList.split(","));
+            final List<Cargo.Status> cargoStatusList = statusListString.stream()
+                    .map(Cargo.Status::getStatus)
+                    .collect(toList());
+            final List<Cargo> cargos = cargoDao.getByUserIdAndStatusListSortedAndPaginated(user.getId(), cargoStatusList, start, limit);
 
             return new CargoListResponse(cargos.stream().map(CargoView::new).collect(toList()));
         }
