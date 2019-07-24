@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.freight.dao.BaseDao.Sort.DESC;
+import static io.jsonwebtoken.lang.Collections.isEmpty;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -62,16 +64,19 @@ public class CargoDao extends BaseDao<Cargo> {
         return cargo;
     }
 
-    public List<Cargo> getByUserIdAndStatusSortedAndPaginated(final int userId,
-                                                              final Cargo.Status status,
-                                                              final int start,
-                                                              final int limit) {
-        requireNonNull(status);
+    public List<Cargo> getByUserIdAndStatusListSortedAndPaginated(final int userId,
+                                                                  final List<Cargo.Status> statusList,
+                                                                  final int start,
+                                                                  final int limit) {
+        requireNonNull(statusList);
+        if (isEmpty(statusList)) {
+            return emptyList();
+        }
 
         final Map<String, Object> inputParam = new HashMap<>();
         inputParam.put("userId", userId);
-        inputParam.put("status", status);
+        inputParam.put("status", statusList);
 
-        return getByFieldSortedAndPaginated("userId = :userId AND status = :status", inputParam, "id", DESC, start, limit);
+        return getByFieldSortedAndPaginated("userId = :userId AND status IN :status", inputParam, "id", DESC, start, limit);
     }
 }
