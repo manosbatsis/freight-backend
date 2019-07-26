@@ -31,8 +31,8 @@
         <mapping class="com.freight.model.Ship"/>
         <mapping class="com.freight.model.ShipAgent"/>
         <mapping class="com.freight.model.Incoterms"/>
-        <mapping class="com.freight.model.CargoShipment"/>
         <mapping class="com.freight.model.Cargo"/>
+        <mapping class="com.freight.model.CargoShipment"/>
         <mapping class="com.freight.model.Contract"/>
         <mapping class="com.freight.model.CargoContract"/>
         <mapping class="com.freight.model.Port"/>

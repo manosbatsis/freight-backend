@@ -4,6 +4,7 @@ import com.freight.dao.AuthenticationDao;
 import com.freight.dao.BulkTypeDao;
 import com.freight.dao.CargoContractDao;
 import com.freight.dao.CargoDao;
+import com.freight.dao.CargoShipmentDao;
 import com.freight.dao.CargoTypeDao;
 import com.freight.dao.CompanyDao;
 import com.freight.dao.ContainerTypeDao;
@@ -25,6 +26,7 @@ public interface DaoFactory {
     BulkTypeDao getBulkTypeDao(final SessionProvider sessionProvider);
     CargoDao getCargoDao(final SessionProvider sessionProvider);
     CargoContractDao getCargoContractDao(final SessionProvider sessionProvider);
+    CargoShipmentDao getCargoShipmentDao(final SessionProvider sessionProvider);
     CargoTypeDao getCargoTypeDao(final SessionProvider sessionProvider);
     CompanyDao getCompanyDao(final SessionProvider sessionProvider);
     ContainerTypeDao getContainerTypeDao(final SessionProvider sessionProvider);

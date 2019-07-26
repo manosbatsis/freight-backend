@@ -120,8 +120,9 @@ CREATE TABLE `BulkType` (
 CREATE TABLE `Cargo` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `contractId` int(11) unsigned DEFAULT NULL,
+  `shipmentId` int(11) unsigned DEFAULT NULL,
   `userId` int(11) unsigned NOT NULL,
-  `status` enum('INQUIRY', 'RESERVED', 'LOADED', 'DELIVERED', 'DELAYED', 'CANCELED', 'EXPIRED') CHARACTER SET utf8 NOT NULL DEFAULT 'INQUIRY',
+  `status` enum('INQUIRY', 'RESERVED', 'DELIVERED', 'CANCELED', 'EXPIRED') CHARACTER SET utf8 NOT NULL DEFAULT 'INQUIRY',
   `cargoTypeId` int(11) unsigned NOT NULL,
   `quantity` int(11) unsigned NOT NULL,
   `departure` date DEFAULT NULL,
@@ -149,11 +150,19 @@ CREATE TABLE `Shipment` (
   `destinationPortId` int(11) unsigned DEFAULT NULL,
   `departure` date NULL DEFAULT NULL,
   `arrival` date NULL DEFAULT NULL,
-  `status` enum('OPEN', 'CLOSED', 'COMPLETED', 'CANCELED') CHARACTER SET utf8 NOT NULL DEFAULT 'OPEN',
+  `status` enum('UPCOMING', 'LIVE', 'COMPLETED', 'CANCELED') CHARACTER SET utf8 NOT NULL DEFAULT 'UPCOMING',
   `shipStatus` enum('DOCKING_ORIGIN', 'LOADING', 'AT_SEA', 'DISCHARGE', 'DOCKING_DESTINATION') CHARACTER SET utf8 NOT NULL DEFAULT 'DOCKING_ORIGIN',
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `CargoShipment` (
+  `cargoId` int(11) unsigned NOT NULL,
+  `shipmentId` int(11) unsigned NOT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`cargoId`, `shipmentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `Port` (
@@ -176,6 +185,7 @@ CREATE TABLE `Port` (
 CREATE TABLE `Contract` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `shipId` int(11) unsigned DEFAULT NULL,
+  `shipmentId` int(11) unsigned DEFAULT NULL,
   `userId` int(11) unsigned NOT NULL,
   `price` decimal(15,2) DEFAULT NULL,
   `priceUnit` enum('KG', 'TON', 'LB', 'M3', 'NOT_USED') CHARACTER SET utf8 NOT NULL DEFAULT 'NOT_USED',
@@ -257,7 +267,7 @@ VALUES
 	('03b3dab9-3bde-4e3b-a1e8-4573aad4665b', 'toshikijahja@gmail.com', NULL, '$2a$12$3RejsWRN97Ow6PEBEwpId.ZoL8qYLWIMBLv8YL1VN64SB8OL268Za', '1846', '2019-07-08 02:45:17', 'VERIFIED', 'b86937ab-1a3d-4ff8-9b71-c994ca50bd73', '2019-07-08 01:45:17', '2019-07-07 18:46:58');
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES
-	(1, '03b3dab9-3bde-4e3b-a1e8-4573aad4665b', NULL, 'toshikijahja@gmail.com', NULL, NULL, 'NOT_KNOWN', 'ACTIVE', '2019-07-08 01:46:59', '2019-07-08 01:46:59');
+	(1, '03b3dab9-3bde-4e3b-a1e8-4573aad4665b', NULL, 'toshikijahja@gmail.com', NULL, NULL, 'CUSTOMER', 'ACTIVE', '2019-07-08 01:46:59', '2019-07-08 01:46:59');
 
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES
@@ -271,14 +281,36 @@ INSERT INTO `Ship` (`id`, `name`, `companyId`, `shipTypeId`, `yearBuilt`, `gross
 VALUES
 	(1, 'Perahu A1', 1, 2, 1935, 1000, 'ACTIVE', '2019-07-15 21:33:39', '2019-07-15 21:33:51');
 
-INSERT INTO `Contract` (`id`, `shipId`, `userId`, `price`, `priceUnit`, `currency`, `payoutId`, `startDate`, `endDate`, `charterType`, `loadingType`, `incotermsId`, `cargoSender`, `cargoSenderOther`, `cargoReceiver`, `cargoReceiverOther`, `cargoInsurance`, `shipInsurance`, `shipAgentId`, `miscellaneousFee`, `demurrage`, `demurrageUnit`, `loadingLaytime`, `dischargeLaytime`, `totalLaytime`, `laytimeUnit`, `despatchType`, `layDaysType`, `created`, `lastModified`)
+INSERT INTO `ShipAgent` (`id`, `assigner`, `customerShare`, `transporterShare`, `created`, `lastModified`)
 VALUES
-	(1, 1, 2, 500000000.00, 'NOT_USED', 'RP', NULL, NULL, NULL, 'CHARTER', 'FIOST', NULL, 'AS_ORDER', NULL, 'AS_ORDER', NULL, 'NONE', 'NONE', NULL, 'TRANSPORTER', NULL, 'NOT_USED', NULL, NULL, NULL, 'NOT_USED', 'NOT_USED', 'NOT_USED', '2019-07-15 21:33:27', '2019-07-15 21:34:11');
+	(1, 'CUSTOMER', 100.00, 0.00, '2019-07-25 21:06:23', '2019-07-25 21:06:23'),
+	(2, 'TRANSPORTER', 50.00, 50.00, '2019-07-25 21:06:29', '2019-07-25 21:06:34');
 
-INSERT INTO `Cargo` (`id`, `contractId`, `userId`, `status`, `cargoTypeId`, `quantity`, `departure`, `weight`, `weightUnit`, `volume`, `volumeUnit`, `length`, `width`, `height`, `dimensionUnit`, `containerTypeId`, `bulkTypeId`, `expiry`, `created`, `lastModified`)
+INSERT INTO `Payout` (`id`, `contractSigned`, `dockedOrigin`, `loaded`, `dockedDestination`, `discharged`, `created`, `lastModified`)
 VALUES
-	(1, 1, 1, 'INQUIRY', 3, 1, NULL, 3000, 'TON', 3041, 'M3', NULL, NULL, NULL, 'NOT_USED', NULL, 4, NULL, '2019-07-15 22:08:05', '2019-07-15 22:08:27');
+	(1, 25.00, 25.00, 25.00, 25.00, 0.00, '2019-07-25 21:04:40', '2019-07-25 21:04:40'),
+	(2, 100.00, 0.00, 0.00, 0.00, 0.00, '2019-07-25 21:04:40', '2019-07-25 21:08:00');
+
+INSERT INTO `Contract` (`id`, `shipId`, `shipmentId`, `userId`, `price`, `priceUnit`, `currency`, `payoutId`, `startDate`, `endDate`, `charterType`, `loadingType`, `incotermsId`, `cargoSender`, `cargoSenderOther`, `cargoReceiver`, `cargoReceiverOther`, `cargoInsurance`, `shipInsurance`, `shipAgentId`, `miscellaneousFee`, `demurrage`, `demurrageUnit`, `loadingLaytime`, `dischargeLaytime`, `totalLaytime`, `laytimeUnit`, `despatchType`, `layDaysType`, `created`, `lastModified`)
+VALUES
+	(1, 1, NULL, 2, 275000000.00, 'NOT_USED', 'RP', 2, '2019-10-20', '2019-11-20', 'LUMPSUM', 'FIOST', 2, 'AS_ORDER', NULL, 'AS_ORDER', NULL, 'TRANSPORTER', 'CUSTOMER', 1, 'TRANSPORTER', NULL, 'NOT_USED', NULL, NULL, NULL, 'NOT_USED', 'DDO', 'NOT_USED', '2019-07-15 21:33:27', '2019-07-25 21:08:18'),
+	(2, 1, 1, 2, 7000.00, 'M3', 'RP', 1, '2019-08-15', '2019-08-25', 'CHARTER', 'FIOST', 2, 'SHIP_OWNER', NULL, 'OTHER_PARTY', 'PT. Sehat Abadi Jaya', 'CUSTOMER', 'CUSTOMER', 2, 'TRANSPORTER', NULL, 'NOT_USED', NULL, NULL, NULL, 'NOT_USED', 'NOT_USED', 'SHINC', '2019-07-15 21:33:27', '2019-07-25 21:07:43');
+
+INSERT INTO `Cargo` (`id`, `contractId`, `shipmentId`, `userId`, `status`, `cargoTypeId`, `quantity`, `departure`, `weight`, `weightUnit`, `volume`, `volumeUnit`, `length`, `width`, `height`, `dimensionUnit`, `containerTypeId`, `bulkTypeId`, `expiry`, `created`, `lastModified`)
+VALUES
+	(1, 1, NULL, 1, 'INQUIRY', 3, 1, '2019-10-20', 3000, 'TON', 3041, 'M3', NULL, NULL, NULL, 'NOT_USED', NULL, 4, NULL, '2019-07-15 22:08:05', '2019-07-15 22:08:27'),
+	(2, 1, 1, 1, 'RESERVED', 3, 1, '2019-08-15', 7000, 'TON', 5020, 'M3', NULL, NULL, NULL, 'NOT_USED', NULL, 3, NULL, '2019-07-15 22:08:05', '2019-07-25 21:18:35');
 
 INSERT INTO `CargoContract` (`id`, `cargoId`, `contractId`, `customerId`, `transporterId`, `status`, `expiry`, `created`, `lastModified`)
 VALUES
-	(1, 1, 1, 1, 2, 'TRANSPORTER_OFFERED', NULL, '2019-07-15 22:08:48', '2019-07-15 22:08:48');
+	(1, 1, 1, 1, 2, 'TRANSPORTER_OFFERED', NULL, '2019-07-15 22:08:48', '2019-07-15 22:08:48'),
+	(2, 2, 1, 1, 2, 'CUSTOMER_ACCEPTED', NULL, '2019-07-15 22:08:48', '2019-07-25 21:09:05');
+
+INSERT INTO `Shipment` (`id`, `shipId`, `originPortId`, `destinationPortId`, `departure`, `arrival`, `status`, `shipStatus`, `created`, `lastModified`)
+VALUES
+	(1, 1, 1, 2, '2019-08-15', '2019-08-25', 'UPCOMING', 'DOCKING_ORIGIN', '2019-07-25 21:03:51', '2019-07-25 21:10:08');
+
+INSERT INTO `Port` (`id`, `code`, `name`, `lat`, `lon`, `city`, `province`, `island`, `country`, `status`, `size`, `created`, `lastModified`)
+VALUES
+	(1, 101, 'Tanjung Priok', 99.37578056, 0.18498889, 'Jakarta', 'Jakarta', 'Jawa', 'Indonesia', 'ACTIVE', 'BIG', '2019-07-25 21:24:11', '2019-07-25 21:24:11'),
+	(2, 514, 'Kuala Semboja', 117.10083333, 1.02000000, 'Kuala Semboja', 'Kalimantan Timur', 'Kalimantan', 'Indonesia', 'ACTIVE', 'SMALL', '2019-07-25 21:25:00', '2019-07-25 21:25:18');
