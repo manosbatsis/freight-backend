@@ -33,9 +33,11 @@ public class Cargo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "contractId")
-    private Contract contract;
+    @Column
+    private Integer contractId;
+
+    @Column
+    private Integer shipmentId;
 
     @Column
     private int userId;
@@ -104,9 +106,7 @@ public class Cargo {
     public enum Status {
         INQUIRY,
         RESERVED,
-        LOADED,
         DELIVERED,
-        DELAYED,
         CANCELED,
         EXPIRED;
 
@@ -144,7 +144,8 @@ public class Cargo {
 
     private Cargo(final Builder builder) {
         this.id = builder.id;
-        this.contract = builder.contract;
+        this.contractId = builder.contractId;
+        this.shipmentId = builder.shipmentId;
         this.userId = builder.userId;
         this.status = builder.status;
         this.cargoType = builder.cargoType;
@@ -167,8 +168,12 @@ public class Cargo {
         return this.id;
     }
 
-    public Contract getContract() {
-        return contract;
+    public Integer getContractId() {
+        return contractId;
+    }
+
+    public Integer getShipmentId() {
+        return shipmentId;
     }
 
     public int getUserId() {
@@ -245,7 +250,8 @@ public class Cargo {
 
     public static class Builder {
         private int id;
-        private Contract contract;
+        private Integer contractId;
+        private Integer shipmentId;
         private int userId;
         private Status status = INQUIRY;
         private CargoType cargoType;
@@ -268,8 +274,13 @@ public class Cargo {
             return this;
         }
 
-        public Builder contract(final Contract contract) {
-            this.contract = contract;
+        public Builder contractId(final Integer contractId) {
+            this.contractId = contractId;
+            return this;
+        }
+
+        public Builder shipmentId(final Integer shipmentId) {
+            this.shipmentId = shipmentId;
             return this;
         }
 
@@ -362,7 +373,8 @@ public class Cargo {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(contract)
+                .append(contractId)
+                .append(shipmentId)
                 .append(userId)
                 .append(status)
                 .append(cargoType)
@@ -397,7 +409,8 @@ public class Cargo {
         final Cargo that = (Cargo) o;
         return new EqualsBuilder()
                 .append(id, that.id)
-                .append(contract, that.contract)
+                .append(contractId, that.contractId)
+                .append(shipmentId, that.shipmentId)
                 .append(userId, that.userId)
                 .append(status, that.status)
                 .append(cargoType, that.cargoType)
@@ -423,7 +436,8 @@ public class Cargo {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("id", id)
-                .append("contract", contract)
+                .append("contractId", contractId)
+                .append("shipmentId", shipmentId)
                 .append("userId", userId)
                 .append("status", status)
                 .append("cargoType", cargoType)

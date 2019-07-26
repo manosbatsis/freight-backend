@@ -32,6 +32,10 @@ public class ContractView {
         return new ShipView(contract.getShip());
     }
 
+    public Integer getShipmentId() {
+        return contract.getShipmentId();
+    }
+
     public int getUserId() {
         return contract.getUserId();
     }

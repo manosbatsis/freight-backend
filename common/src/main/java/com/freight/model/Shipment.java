@@ -1,5 +1,6 @@
 package com.freight.model;
 
+import com.freight.exception.FreightException;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.Instant;
 
+import static com.freight.exception.BadRequest.SHIPMENT_STATUS_NOT_EXIST;
 import static com.freight.model.Shipment.ShipStatus.DOCKING_ORIGIN;
 
 /**
@@ -66,10 +68,19 @@ public class Shipment {
     private Instant lastModified;
 
     public enum Status {
-        OPEN,
-        CLOSED,
+        UPCOMING,
+        LIVE,
         COMPLETED,
-        CANCELED
+        CANCELED;
+
+        public static Status getStatus(final String statusInString) {
+            for (final Status status : Status.values()) {
+                if (status.name().equalsIgnoreCase(statusInString)) {
+                    return status;
+                }
+            }
+            throw new FreightException(SHIPMENT_STATUS_NOT_EXIST);
+        }
     }
 
     public enum ShipStatus {
@@ -140,7 +151,7 @@ public class Shipment {
         private Port destinationPort;
         private Instant departure;
         private Instant arrival;
-        private Status status = Status.OPEN;
+        private Status status = Status.UPCOMING;
         private ShipStatus shipStatus = DOCKING_ORIGIN;
 
         public Builder id(final int id) {

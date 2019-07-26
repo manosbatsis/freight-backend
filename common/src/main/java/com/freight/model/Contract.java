@@ -35,6 +35,9 @@ public class Contract {
     private Ship ship;
 
     @Column
+    private Integer shipmentId;
+
+    @Column
     private int userId;
 
     @Column
@@ -188,6 +191,7 @@ public class Contract {
     private Contract(final Builder builder) {
         this.id = builder.id;
         this.ship = builder.ship;
+        this.shipmentId = builder.shipmentId;
         this.userId = builder.userId;
         this.price = builder.price;
         this.priceUnit = builder.priceUnit;
@@ -226,6 +230,14 @@ public class Contract {
 
     public void setShip(final Ship ship) {
         this.ship = ship;
+    }
+
+    public Integer getShipmentId() {
+        return this.shipmentId;
+    }
+
+    public void setShipmentId(final Integer shipmentId) {
+        this.shipmentId = shipmentId;
     }
 
     public int getUserId() {
@@ -447,6 +459,7 @@ public class Contract {
     public static class Builder {
         private int id;
         private Ship ship;
+        private Integer shipmentId;
         private int userId;
         private BigDecimal price;
         private PriceUnit priceUnit = PriceUnit.NOT_USED;
@@ -481,6 +494,11 @@ public class Contract {
 
         public Builder ship(final Ship ship) {
             this.ship = ship;
+            return this;
+        }
+
+        public Builder shipmentId(final Integer shipmentId) {
+            this.shipmentId = shipmentId;
             return this;
         }
 
@@ -624,6 +642,7 @@ public class Contract {
         return new HashCodeBuilder()
                 .append(id)
                 .append(ship)
+                .append(shipmentId)
                 .append(userId)
                 .append(price)
                 .append(priceUnit)
@@ -669,6 +688,7 @@ public class Contract {
         return new EqualsBuilder()
                 .append(id, that.id)
                 .append(ship, that.ship)
+                .append(shipmentId, that.shipmentId)
                 .append(userId, that.userId)
                 .append(price, that.price)
                 .append(priceUnit, that.priceUnit)
@@ -705,6 +725,7 @@ public class Contract {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("id", id)
                 .append("ship", ship)
+                .append("shipmentId", shipmentId)
                 .append("userId", userId)
                 .append("price", price)
                 .append("priceUnit", priceUnit)

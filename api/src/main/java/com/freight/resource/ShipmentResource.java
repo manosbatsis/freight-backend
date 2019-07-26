@@ -2,20 +2,23 @@ package com.freight.resource;
 
 import com.freight.auth.UserAuth;
 import com.freight.auth.UserScope;
+import com.freight.dao.CargoShipmentDao;
 import com.freight.dao.PortDao;
 import com.freight.dao.SessionProvider;
 import com.freight.dao.ShipDao;
 import com.freight.dao.ShipmentDao;
 import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
+import com.freight.model.CargoShipment;
 import com.freight.model.Port;
 import com.freight.model.Ship;
 import com.freight.model.Shipment;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.ShipmentRequestBody;
-import com.freight.response.ShipmentListResponse;
+import com.freight.response.CargoShipmentListResponse;
 import com.freight.response.ShipmentResponse;
+import com.freight.view.CargoShipmentView;
 import com.freight.view.ShipmentView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,10 +26,12 @@ import io.swagger.annotations.ApiOperation;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.time.Instant;
 import java.util.List;
@@ -41,7 +46,7 @@ import static com.freight.exception.BadRequest.PORT_NOT_EXIST;
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
-import static com.google.common.primitives.Ints.asList;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -56,13 +61,32 @@ public class ShipmentResource {
     private Provider<UserScope> userScopeProvider;
 
     @GET
-    @ApiOperation(value = "List available/open shipment")
+    @ApiOperation(value = "Get shipment by ship status")
     @Produces(MediaType.APPLICATION_JSON)
-    public ShipmentListResponse getOpenShipment() {
+    @UserAuth(optional = false)
+    public CargoShipmentListResponse getShipmentByStatus(
+            @DefaultValue("upcoming") @QueryParam("status") final String statusList,
+            @DefaultValue("0") @QueryParam("start") final int start,
+            @DefaultValue("20") @QueryParam("limit") final int limit) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
-            final ShipmentDao shipmentDao = daoProvider.getDaoFactory().getShipmentDao(sessionProvider);
-            final List<Shipment> shipments = shipmentDao.getByStatus(Shipment.Status.OPEN);
-            return new ShipmentListResponse(shipments.stream().map(ShipmentView::new).collect(toList()));
+            final CargoShipmentDao cargoShipmentDao = daoProvider.getDaoFactory().getCargoShipmentDao(sessionProvider);
+            final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
+
+            final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
+                    .orElseThrow(() -> new FreightException(USER_NOT_EXIST));
+
+            final List<String> statusListString = asList(statusList.split(","));
+            final List<Shipment.Status> shipmentStatusList = statusListString.stream()
+                    .map(Shipment.Status::getStatus)
+                    .collect(toList());
+
+            final List<CargoShipment> cargoShipments = cargoShipmentDao.getByUserIdAndShipmentStatusListSortedAndPaginated(
+                    user.getId(), shipmentStatusList, start, limit);
+            final List<CargoShipmentView> cargoShipmentViews = cargoShipments.stream()
+                    .map(cargoShipment -> new CargoShipmentView(cargoShipment.getCargo(), cargoShipment.getShipment()))
+                    .collect(toList());
+
+            return new CargoShipmentListResponse(cargoShipmentViews);
         }
     }
 

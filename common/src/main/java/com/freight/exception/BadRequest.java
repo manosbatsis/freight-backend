@@ -31,6 +31,7 @@ public enum BadRequest implements ResponseError {
     SHIP_NAME_NOT_EXIST("Ship name does not exist"),
     SHIP_NOT_EXIST("Ship does not exist"),
     SHIPMENT_NOT_EXIST("Shipment does not exist"),
+    SHIPMENT_STATUS_NOT_EXIST("Shipment status does not exist"),
     STATUS_NOT_EXIST("Status does not exist"),
     TYPE_NOT_EXIST("Type does not exist"),
     USER_NOT_EXIST("User does not exist"),
