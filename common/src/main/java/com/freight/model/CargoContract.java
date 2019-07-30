@@ -58,7 +58,6 @@ public class CargoContract {
         CUSTOMER_ACCEPTED,
         CUSTOMER_DECLINED,
         CUSTOMER_NEGOTIATE,
-        CANCELED,
         CUSTOMER_EXPIRED,
         TRANSPORTER_EXPIRED,
     }
