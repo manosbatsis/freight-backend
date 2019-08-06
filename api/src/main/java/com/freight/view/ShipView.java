@@ -37,4 +37,8 @@ public class ShipView {
     public Ship.Status getStatus() {
         return ship.getStatus();
     }
+
+    public ShipTypeView getType() {
+        return new ShipTypeView(ship.getShipType());
+    }
 }
