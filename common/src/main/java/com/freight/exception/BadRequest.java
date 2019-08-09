@@ -26,7 +26,7 @@ public enum BadRequest implements ResponseError {
     LCL_INPUT_EMPTY("Input needed for LCL cargo type cannot be empty"),
     ORIGIN_PORT_EMPTY("Origin port cannot be empty"),
     PAYOUT_NOT_SUM_UP("Payment schedule has to sum up to 100%"),
-    PORT_NOT_EXIST("Port does not exist"),
+    PORT_NOT_EXIST("Location does not exist"),
     SHIP_CARGO_TYPE_NOT_MATCH("Ship cargo type does not match cargo type"),
     SHIP_NAME_NOT_EXIST("Ship name does not exist"),
     SHIP_NOT_EXIST("Ship does not exist"),

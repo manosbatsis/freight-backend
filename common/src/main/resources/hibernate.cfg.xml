@@ -26,6 +26,7 @@
         <mapping class="com.freight.model.BulkType"/>
         <mapping class="com.freight.model.ContainerType"/>
         <mapping class="com.freight.model.ShipCargoType"/>
+        <mapping class="com.freight.model.Location"/>
         <mapping class="com.freight.model.Shipment"/>
         <mapping class="com.freight.model.ShipType"/>
         <mapping class="com.freight.model.Ship"/>
@@ -35,7 +36,7 @@
         <mapping class="com.freight.model.CargoShipment"/>
         <mapping class="com.freight.model.Contract"/>
         <mapping class="com.freight.model.CargoContract"/>
-        <mapping class="com.freight.model.Port"/>
+        <mapping class="com.freight.model.Location"/>
         <mapping class="com.freight.model.Payout"/>
     </session-factory>
 </hibernate-configuration>

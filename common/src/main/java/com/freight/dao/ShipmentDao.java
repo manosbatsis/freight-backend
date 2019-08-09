@@ -1,6 +1,6 @@
 package com.freight.dao;
 
-import com.freight.model.Port;
+import com.freight.model.Location;
 import com.freight.model.Ship;
 import com.freight.model.Shipment;
 import com.google.inject.assistedinject.Assisted;
@@ -35,18 +35,18 @@ public class ShipmentDao extends BaseDao<Shipment> {
     }
 
     public Shipment createShipment(final Ship ship,
-                                   final Port originPort,
-                                   final Port destinationPort,
+                                   final Location originLocation,
+                                   final Location destinationLocation,
                                    final long departure,
                                    final long arrival) {
         assertNotNull(ship, SHIP_NOT_EXIST);
-        assertNotNull(originPort, ORIGIN_PORT_EMPTY);
-        assertNotNull(destinationPort, DESTINATION_PORT_EMPTY);
+        assertNotNull(originLocation, ORIGIN_PORT_EMPTY);
+        assertNotNull(destinationLocation, DESTINATION_PORT_EMPTY);
         getSessionProvider().startTransaction();
         final Shipment shipment = new Shipment.Builder()
                 .ship(ship)
-                .originPort(originPort)
-                .destinationPort(destinationPort)
+                .originLocation(originLocation)
+                .destinationLocation(destinationLocation)
                 .departure(Instant.ofEpochSecond(departure))
                 .arrival(Instant.ofEpochSecond(arrival))
                 .build();

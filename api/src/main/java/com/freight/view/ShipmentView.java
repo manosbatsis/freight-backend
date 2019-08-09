@@ -24,12 +24,12 @@ public class ShipmentView {
         return new ShipView(shipment.getShip());
     }
 
-    public PortView getOriginPort() {
-        return new PortView(shipment.getOriginPort());
+    public LocationView getOriginLocation() {
+        return new LocationView(shipment.getOriginLocation());
     }
 
-    public PortView getDestinationPort() {
-        return new PortView(shipment.getDestinationPort());
+    public LocationView getDestinationLocation() {
+        return new LocationView(shipment.getDestinationLocation());
     }
 
     public Instant getDeparture() {

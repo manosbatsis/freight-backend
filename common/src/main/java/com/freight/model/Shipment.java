@@ -38,12 +38,12 @@ public class Shipment {
     private Ship ship;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "originPortId")
-    private Port originPort;
+    @JoinColumn(name = "originLocationId")
+    private Location originLocation;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "destinationPortId")
-    private Port destinationPort;
+    @JoinColumn(name = "destinationLocationId")
+    private Location destinationLocation;
 
     @Column
     private Instant departure;
@@ -96,8 +96,8 @@ public class Shipment {
     private Shipment(final Builder builder) {
         this.id = builder.id;
         this.ship = builder.ship;
-        this.originPort = builder.originPort;
-        this.destinationPort = builder.destinationPort;
+        this.originLocation = builder.originLocation;
+        this.destinationLocation = builder.destinationLocation;
         this.departure = builder.departure;
         this.arrival = builder.arrival;
         this.status = builder.status;
@@ -112,12 +112,12 @@ public class Shipment {
         return ship;
     }
 
-    public Port getOriginPort() {
-        return originPort;
+    public Location getOriginLocation() {
+        return originLocation;
     }
 
-    public Port getDestinationPort() {
-        return destinationPort;
+    public Location getDestinationLocation() {
+        return destinationLocation;
     }
 
     public Instant getDeparture() {
@@ -147,8 +147,8 @@ public class Shipment {
     public static class Builder {
         private int id;
         private Ship ship;
-        private Port originPort;
-        private Port destinationPort;
+        private Location originLocation;
+        private Location destinationLocation;
         private Instant departure;
         private Instant arrival;
         private Status status = Status.UPCOMING;
@@ -164,13 +164,13 @@ public class Shipment {
             return this;
         }
 
-        public Builder originPort(final Port originPort) {
-            this.originPort = originPort;
+        public Builder originLocation(final Location originLocation) {
+            this.originLocation = originLocation;
             return this;
         }
 
-        public Builder destinationPort(final Port destinationPort) {
-            this.destinationPort = destinationPort;
+        public Builder destinationLocation(final Location destinationLocation) {
+            this.destinationLocation = destinationLocation;
             return this;
         }
 
@@ -204,8 +204,8 @@ public class Shipment {
         return new HashCodeBuilder()
                 .append(id)
                 .append(ship)
-                .append(originPort)
-                .append(destinationPort)
+                .append(originLocation)
+                .append(destinationLocation)
                 .append(departure)
                 .append(arrival)
                 .append(status)
@@ -229,8 +229,8 @@ public class Shipment {
         return new EqualsBuilder()
                 .append(id, that.id)
                 .append(ship, that.ship)
-                .append(originPort, that.originPort)
-                .append(destinationPort, that.destinationPort)
+                .append(originLocation, that.originLocation)
+                .append(destinationLocation, that.destinationLocation)
                 .append(departure, that.departure)
                 .append(arrival, that.arrival)
                 .append(status, that.status)
@@ -245,8 +245,8 @@ public class Shipment {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("id", id)
                 .append("ship", ship)
-                .append("originPort", originPort)
-                .append("destinationPort", destinationPort)
+                .append("originLocation", originLocation)
+                .append("destinationLocation", destinationLocation)
                 .append("departure", departure)
                 .append("arrival", arrival)
                 .append("status", status)

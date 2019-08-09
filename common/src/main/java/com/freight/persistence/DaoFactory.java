@@ -10,7 +10,7 @@ import com.freight.dao.CompanyDao;
 import com.freight.dao.ContainerTypeDao;
 import com.freight.dao.ContractDao;
 import com.freight.dao.IdentificationDao;
-import com.freight.dao.PortDao;
+import com.freight.dao.LocationDao;
 import com.freight.dao.SessionProvider;
 import com.freight.dao.ShipCargoTypeDao;
 import com.freight.dao.ShipDao;
@@ -32,7 +32,7 @@ public interface DaoFactory {
     ContainerTypeDao getContainerTypeDao(final SessionProvider sessionProvider);
     ContractDao getContractDao(final SessionProvider sessionProvider);
     IdentificationDao getIdentificationDao(final SessionProvider sessionProvider);
-    PortDao getPortDao(final SessionProvider sessionProvider);
+    LocationDao getLocationDao(final SessionProvider sessionProvider);
     ShipDao getShipDao(final SessionProvider sessionProvider);
     ShipCargoTypeDao getShipCargoTypeDao(final SessionProvider sessionProvider);
     ShipmentDao getShipmentDao(final SessionProvider sessionProvider);

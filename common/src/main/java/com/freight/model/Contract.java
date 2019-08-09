@@ -54,6 +54,14 @@ public class Contract {
     @JoinColumn(name = "payoutId")
     private Payout payout;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "originLocationId")
+    private Location originLocation;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "destinationLocationId")
+    private Location destinationLocation;
+
     @Column
     private Instant startDate;
 
@@ -197,6 +205,8 @@ public class Contract {
         this.priceUnit = builder.priceUnit;
         this.currency = builder.currency;
         this.payout = builder.payout;
+        this.originLocation = builder.originLocation;
+        this.destinationLocation = builder.destinationLocation;
         this.startDate = builder.startDate;
         this.endDate = builder.endDate;
         this.charterType = builder.charterType;
@@ -220,240 +230,132 @@ public class Contract {
         return id;
     }
 
-    public void setId(final int id) {
-        this.id = id;
-    }
-
     public Ship getShip() {
         return ship;
     }
 
-    public void setShip(final Ship ship) {
-        this.ship = ship;
-    }
-
     public Integer getShipmentId() {
-        return this.shipmentId;
-    }
-
-    public void setShipmentId(final Integer shipmentId) {
-        this.shipmentId = shipmentId;
+        return shipmentId;
     }
 
     public int getUserId() {
         return userId;
     }
 
-    public void setUserId(final int userId) {
-        this.userId = userId;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 
     public PriceUnit getPriceUnit() {
         return priceUnit;
     }
 
-    public void setPriceUnit(final PriceUnit priceUnit) {
-        this.priceUnit = priceUnit;
-    }
-
     public String getCurrency() {
         return currency;
-    }
-
-    public void setCurrency(final String currency) {
-        this.currency = currency;
     }
 
     public Payout getPayout() {
         return payout;
     }
 
-    public void setPayout(final Payout payout) {
-        this.payout = payout;
+    public Location getOriginLocation() {
+        return originLocation;
+    }
+
+    public Location getDestinationLocation() {
+        return destinationLocation;
     }
 
     public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(final Instant startDate) {
-        this.startDate = startDate;
-    }
-
     public Instant getEndDate() {
         return endDate;
-    }
-
-    public void setEndDate(final Instant endDate) {
-        this.endDate = endDate;
     }
 
     public CharterType getCharterType() {
         return charterType;
     }
 
-    public void setCharterType(final CharterType charterType) {
-        this.charterType = charterType;
-    }
-
     public LoadingType getLoadingType() {
         return loadingType;
-    }
-
-    public void setLoadingType(final LoadingType loadingType) {
-        this.loadingType = loadingType;
     }
 
     public Incoterms getIncoterms() {
         return incoterms;
     }
 
-    public void setIncoterms(final Incoterms incoterms) {
-        this.incoterms = incoterms;
-    }
-
     public CargoHandler getCargoSender() {
         return cargoSender;
-    }
-
-    public void setCargoSender(final CargoHandler cargoSender) {
-        this.cargoSender = cargoSender;
     }
 
     public String getCargoSenderOther() {
         return cargoSenderOther;
     }
 
-    public void setCargoSenderOther(final String cargoSenderOther) {
-        this.cargoSenderOther = cargoSenderOther;
-    }
-
     public CargoHandler getCargoReceiver() {
         return cargoReceiver;
-    }
-
-    public void setCargoReceiver(final CargoHandler cargoReceiver) {
-        this.cargoReceiver = cargoReceiver;
     }
 
     public String getCargoReceiverOther() {
         return cargoReceiverOther;
     }
 
-    public void setCargoReceiverOther(final String cargoReceiverOther) {
-        this.cargoReceiverOther = cargoReceiverOther;
-    }
-
     public InsuranceProvider getCargoInsurance() {
         return cargoInsurance;
-    }
-
-    public void setCargoInsurance(final InsuranceProvider cargoInsurance) {
-        this.cargoInsurance = cargoInsurance;
     }
 
     public InsuranceProvider getShipInsurance() {
         return shipInsurance;
     }
 
-    public void setShipInsurance(final InsuranceProvider shipInsurance) {
-        this.shipInsurance = shipInsurance;
-    }
-
     public ShipAgent getShipAgent() {
         return shipAgent;
-    }
-
-    public void setShipAgent(final ShipAgent shipAgent) {
-        this.shipAgent = shipAgent;
     }
 
     public Type getMiscellaneousFee() {
         return miscellaneousFee;
     }
 
-    public void setMiscellaneousFee(final Type miscellaneousFee) {
-        this.miscellaneousFee = miscellaneousFee;
-    }
-
     public BigDecimal getDemurrage() {
         return demurrage;
-    }
-
-    public void setDemurrage(final BigDecimal demurrage) {
-        this.demurrage = demurrage;
     }
 
     public TimeUnit getDemurrageUnit() {
         return demurrageUnit;
     }
 
-    public void setDemurrageUnit(final TimeUnit demurrageUnit) {
-        this.demurrageUnit = demurrageUnit;
-    }
-
     public Integer getLoadingLaytime() {
         return loadingLaytime;
-    }
-
-    public void setLoadingLaytime(final Integer loadingLaytime) {
-        this.loadingLaytime = loadingLaytime;
     }
 
     public Integer getDischargeLaytime() {
         return dischargeLaytime;
     }
 
-    public void setDischargeLaytime(final Integer dischargeLaytime) {
-        this.dischargeLaytime = dischargeLaytime;
-    }
-
     public Integer getTotalLaytime() {
         return totalLaytime;
-    }
-
-    public void setTotalLaytime(final Integer totalLaytime) {
-        this.totalLaytime = totalLaytime;
     }
 
     public TimeUnit getLaytimeUnit() {
         return laytimeUnit;
     }
 
-    public void setLaytimeUnit(final TimeUnit laytimeUnit) {
-        this.laytimeUnit = laytimeUnit;
-    }
-
     public DespatchType getDespatchType() {
         return despatchType;
-    }
-
-    public void setDespatchType(final DespatchType despatchType) {
-        this.despatchType = despatchType;
     }
 
     public LayDaysType getLayDaysType() {
         return layDaysType;
     }
 
-    public void setLayDaysType(final LayDaysType layDaysType) {
-        this.layDaysType = layDaysType;
+    public Instant getCreated() {
+        return created;
     }
 
-    public void setCreated(final Instant created) {
-        this.created = created;
-    }
-
-    public void setLastModified(final Instant lastModified) {
-        this.lastModified = lastModified;
+    public Instant getLastModified() {
+        return lastModified;
     }
 
     public static class Builder {
@@ -465,6 +367,8 @@ public class Contract {
         private PriceUnit priceUnit = PriceUnit.NOT_USED;
         private String currency;
         private Payout payout;
+        private Location originLocation;
+        private Location destinationLocation;
         private Instant startDate;
         private Instant endDate;
         private CharterType charterType;
@@ -524,6 +428,16 @@ public class Contract {
 
         public Builder payout(final Payout payout) {
             this.payout = payout;
+            return this;
+        }
+
+        public Builder originLocation(final Location originLocation) {
+            this.originLocation = originLocation;
+            return this;
+        }
+
+        public Builder destinationLocation(final Location destinationLocation) {
+            this.destinationLocation = destinationLocation;
             return this;
         }
 
@@ -648,6 +562,8 @@ public class Contract {
                 .append(priceUnit)
                 .append(currency)
                 .append(payout)
+                .append(originLocation)
+                .append(destinationLocation)
                 .append(startDate)
                 .append(endDate)
                 .append(charterType)
@@ -694,6 +610,8 @@ public class Contract {
                 .append(priceUnit, that.priceUnit)
                 .append(currency, that.currency)
                 .append(payout, that.payout)
+                .append(originLocation, that.originLocation)
+                .append(destinationLocation, that.destinationLocation)
                 .append(startDate, that.startDate)
                 .append(endDate, that.endDate)
                 .append(charterType, that.charterType)
@@ -731,6 +649,8 @@ public class Contract {
                 .append("priceUnit", priceUnit)
                 .append("currency", currency)
                 .append("payout", payout)
+                .append("originLocation", originLocation)
+                .append("destinationLocation", destinationLocation)
                 .append("startDate", startDate)
                 .append("endDate", endDate)
                 .append("charterType", charterType)
