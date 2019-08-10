@@ -1,6 +1,6 @@
 package com.freight.dao;
 
-import com.freight.model.Port;
+import com.freight.model.Location;
 import com.freight.model.Ship;
 import com.freight.model.Shipment;
 import com.google.inject.assistedinject.Assisted;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.freight.dao.BaseDao.Sort.DESC;
-import static com.freight.exception.BadRequest.DESTINATION_PORT_EMPTY;
-import static com.freight.exception.BadRequest.ORIGIN_PORT_EMPTY;
+import static com.freight.exception.BadRequest.DESTINATION_EMPTY;
+import static com.freight.exception.BadRequest.ORIGIN_EMPTY;
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
 import static com.freight.util.AssertUtil.assertNotNull;
 import static io.jsonwebtoken.lang.Collections.isEmpty;
@@ -35,18 +35,18 @@ public class ShipmentDao extends BaseDao<Shipment> {
     }
 
     public Shipment createShipment(final Ship ship,
-                                   final Port originPort,
-                                   final Port destinationPort,
+                                   final Location originLocation,
+                                   final Location destinationLocation,
                                    final long departure,
                                    final long arrival) {
         assertNotNull(ship, SHIP_NOT_EXIST);
-        assertNotNull(originPort, ORIGIN_PORT_EMPTY);
-        assertNotNull(destinationPort, DESTINATION_PORT_EMPTY);
+        assertNotNull(originLocation, ORIGIN_EMPTY);
+        assertNotNull(destinationLocation, DESTINATION_EMPTY);
         getSessionProvider().startTransaction();
         final Shipment shipment = new Shipment.Builder()
                 .ship(ship)
-                .originPort(originPort)
-                .destinationPort(destinationPort)
+                .originLocation(originLocation)
+                .destinationLocation(destinationLocation)
                 .departure(Instant.ofEpochSecond(departure))
                 .arrival(Instant.ofEpochSecond(arrival))
                 .build();

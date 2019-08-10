@@ -53,6 +53,14 @@ public class Cargo {
     @Column
     private int quantity;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "originLocationId")
+    private Location originLocation;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "destinationLocationId")
+    private Location destinationLocation;
+
     @Column
     private Instant departure;
 
@@ -150,6 +158,8 @@ public class Cargo {
         this.status = builder.status;
         this.cargoType = builder.cargoType;
         this.quantity = builder.quantity;
+        this.originLocation = builder.originLocation;
+        this.destinationLocation = builder.destinationLocation;
         this.departure = builder.departure;
         this.volume = builder.volume;
         this.volumeUnit = builder.volumeUnit;
@@ -190,6 +200,14 @@ public class Cargo {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public Location getOriginLocation() {
+        return originLocation;
+    }
+
+    public Location getDestinationLocation() {
+        return destinationLocation;
     }
 
     public Instant getDeparture() {
@@ -256,6 +274,8 @@ public class Cargo {
         private Status status = INQUIRY;
         private CargoType cargoType;
         private int quantity;
+        private Location originLocation;
+        private Location destinationLocation;
         private Instant departure;
         private Integer volume;
         private VolumeUnit volumeUnit = VolumeUnit.NOT_USED;
@@ -301,6 +321,16 @@ public class Cargo {
 
         public Builder quantity(final int quantity) {
             this.quantity = quantity;
+            return this;
+        }
+
+        public Builder originLocation(final Location originLocation) {
+            this.originLocation = originLocation;
+            return this;
+        }
+
+        public Builder destinationLocation(final Location destinationLocation) {
+            this.destinationLocation = destinationLocation;
             return this;
         }
 
@@ -379,6 +409,8 @@ public class Cargo {
                 .append(status)
                 .append(cargoType)
                 .append(quantity)
+                .append(originLocation)
+                .append(destinationLocation)
                 .append(departure)
                 .append(volume)
                 .append(volumeUnit)
@@ -415,6 +447,8 @@ public class Cargo {
                 .append(status, that.status)
                 .append(cargoType, that.cargoType)
                 .append(quantity, that.quantity)
+                .append(originLocation, that.originLocation)
+                .append(destinationLocation, that.destinationLocation)
                 .append(departure, that.departure)
                 .append(volume, that.volume)
                 .append(volumeUnit, that.volumeUnit)
@@ -442,6 +476,8 @@ public class Cargo {
                 .append("status", status)
                 .append("cargoType", cargoType)
                 .append("quantity", quantity)
+                .append("originLocation", originLocation)
+                .append("destinationLocation", destinationLocation)
                 .append("departure", departure)
                 .append("volume", volume)
                 .append("volumeUnit", volumeUnit)

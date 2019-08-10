@@ -6,6 +6,7 @@ import com.freight.dao.BulkTypeDao;
 import com.freight.dao.CargoDao;
 import com.freight.dao.CargoTypeDao;
 import com.freight.dao.ContainerTypeDao;
+import com.freight.dao.LocationDao;
 import com.freight.dao.SessionProvider;
 import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
@@ -13,9 +14,11 @@ import com.freight.model.BulkType;
 import com.freight.model.Cargo;
 import com.freight.model.CargoType;
 import com.freight.model.ContainerType;
+import com.freight.model.Location;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.CargoRequestBody;
+import com.freight.request_body.LocationRequestBody;
 import com.freight.response.CargoListResponse;
 import com.freight.response.CargoResponse;
 import com.freight.view.CargoView;
@@ -44,12 +47,15 @@ import static com.freight.exception.BadRequest.BULK_TYPE_NOT_EXIST;
 import static com.freight.exception.BadRequest.CARGO_TYPE_NOT_EXIST;
 import static com.freight.exception.BadRequest.CONTAINER_TYPE_NOT_EXIST;
 import static com.freight.exception.BadRequest.DEPARTURE_IN_PAST;
+import static com.freight.exception.BadRequest.DESTINATION_EMPTY;
 import static com.freight.exception.BadRequest.DIMENSION_EMPTY;
 import static com.freight.exception.BadRequest.FCL_INPUT_EMPTY;
 import static com.freight.exception.BadRequest.LCL_INPUT_EMPTY;
+import static com.freight.exception.BadRequest.ORIGIN_EMPTY;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.BadRequest.VOLUME_EMPTY;
 import static com.freight.exception.BadRequest.WEIGHT_EMPTY;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -111,10 +117,41 @@ public class CargoResource {
             final CargoDao cargoDao = daoProvider.getDaoFactory().getCargoDao(sessionProvider);
             final CargoTypeDao cargoTypeDao = daoProvider.getDaoFactory().getCargoTypeDao(sessionProvider);
             final ContainerTypeDao containerTypeDao = daoProvider.getDaoFactory().getContainerTypeDao(sessionProvider);
+            final LocationDao locationDao = daoProvider.getDaoFactory().getLocationDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
 
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
                     .orElseThrow(() -> new FreightException(USER_NOT_EXIST));
+
+            validateLocation(cargoRequestBody.getOrigin(), cargoRequestBody.getDestination());
+            final Location originLocation = locationDao.getOrCreateIfNotExist(
+                    cargoRequestBody.getOrigin().getExternalId(),
+                    cargoRequestBody.getOrigin().getMainName(),
+                    cargoRequestBody.getOrigin().getSecondaryName(),
+                    cargoRequestBody.getOrigin().getLat(),
+                    cargoRequestBody.getOrigin().getLon(),
+                    cargoRequestBody.getOrigin().getRoute(),
+                    cargoRequestBody.getOrigin().getLocality(),
+                    cargoRequestBody.getOrigin().getVillage(),
+                    cargoRequestBody.getOrigin().getSubdistrict(),
+                    cargoRequestBody.getOrigin().getCity(),
+                    cargoRequestBody.getOrigin().getProvince(),
+                    cargoRequestBody.getOrigin().getCountry()
+            );
+            final Location destinationLocation = locationDao.getOrCreateIfNotExist(
+                    cargoRequestBody.getDestination().getExternalId(),
+                    cargoRequestBody.getDestination().getMainName(),
+                    cargoRequestBody.getDestination().getSecondaryName(),
+                    cargoRequestBody.getDestination().getLat(),
+                    cargoRequestBody.getDestination().getLon(),
+                    cargoRequestBody.getDestination().getRoute(),
+                    cargoRequestBody.getDestination().getLocality(),
+                    cargoRequestBody.getDestination().getVillage(),
+                    cargoRequestBody.getDestination().getSubdistrict(),
+                    cargoRequestBody.getDestination().getCity(),
+                    cargoRequestBody.getDestination().getProvince(),
+                    cargoRequestBody.getDestination().getCountry()
+            );
 
             final CargoType cargoType = cargoTypeDao.getByIdOptional(cargoRequestBody.getCargoTypeId())
                     .orElseThrow(() -> new FreightException(CARGO_TYPE_NOT_EXIST));
@@ -131,6 +168,8 @@ public class CargoResource {
                     user.getId(),
                     cargoType,
                     cargoRequestBody.getQuantity(),
+                    originLocation,
+                    destinationLocation,
                     Instant.ofEpochSecond(cargoRequestBody.getDeparture()),
                     cargoRequestBody.getWeightOptional(),
                     cargoRequestBody.getWeightUnit(),
@@ -144,6 +183,25 @@ public class CargoResource {
                     bulkTypeOptional);
 
             return new CargoResponse(new CargoView(cargo));
+        }
+    }
+
+    private void validateLocation(final LocationRequestBody origin,
+                                  final LocationRequestBody destination) {
+        if (origin == null
+                || isNullOrEmpty(origin.getMainName())
+                || isNullOrEmpty(origin.getSecondaryName())
+                || (origin.getLat() == null)
+                || (origin.getLon() == null)) {
+            throw new FreightException(ORIGIN_EMPTY);
+        }
+
+        if (destination == null
+                || isNullOrEmpty(destination.getMainName())
+                || isNullOrEmpty(destination.getSecondaryName())
+                || (destination.getLat() == null)
+                || (destination.getLon() == null)) {
+            throw new FreightException(DESTINATION_EMPTY);
         }
     }
 
