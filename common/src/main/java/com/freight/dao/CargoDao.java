@@ -4,6 +4,7 @@ import com.freight.model.BulkType;
 import com.freight.model.Cargo;
 import com.freight.model.CargoType;
 import com.freight.model.ContainerType;
+import com.freight.model.Location;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -31,6 +32,8 @@ public class CargoDao extends BaseDao<Cargo> {
     public Cargo createCargo(final int userId,
                              final CargoType cargoType,
                              final int quantity,
+                             final Location originLocation,
+                             final Location destinationLocation,
                              final Instant departure,
                              final Optional<Integer> weightOptional,
                              final Cargo.WeightUnit weightUnit,
@@ -47,6 +50,8 @@ public class CargoDao extends BaseDao<Cargo> {
                 .userId(userId)
                 .cargoType(cargoType)
                 .quantity(quantity)
+                .originLocation(originLocation)
+                .destinationLocation(destinationLocation)
                 .departure(departure)
                 .weight(weightOptional.map(weight -> weight).orElse(null))
                 .weightUnit(weightUnit)

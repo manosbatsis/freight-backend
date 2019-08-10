@@ -20,6 +20,12 @@ public class CargoRequestBody implements Serializable {
     @ApiModelProperty(value = "Quantity of the cargo")
     private int quantity;
 
+    @ApiModelProperty(value = "Origin of where the cargo will be shipped from")
+    private LocationRequestBody origin;
+
+    @ApiModelProperty(value = "Destination of where the cargo will be shipped to")
+    private LocationRequestBody destination;
+
     @ApiModelProperty(value = "Departure date of the cargo")
     private long departure;
 
@@ -66,6 +72,14 @@ public class CargoRequestBody implements Serializable {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public LocationRequestBody getOrigin() {
+        return origin;
+    }
+
+    public LocationRequestBody getDestination() {
+        return destination;
     }
 
     public long getDeparture() {

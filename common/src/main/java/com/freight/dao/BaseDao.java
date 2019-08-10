@@ -64,6 +64,13 @@ public class BaseDao<T> {
     }
 
     @SuppressWarnings("unchecked")
+    protected Optional<T> getByFieldOptional(final String field, final Object data) {
+        requireNonNull(field);
+        final List<T> results = getByField(field, data);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @SuppressWarnings("unchecked")
     protected List<T> getByField(final String field, final Object data) {
         requireNonNull(field);
         final Query query = getSessionProvider().getSession().createQuery(

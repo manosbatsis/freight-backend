@@ -24,11 +24,11 @@ public class ShipmentView {
         return new ShipView(shipment.getShip());
     }
 
-    public LocationView getOriginLocation() {
+    public LocationView getOrigin() {
         return new LocationView(shipment.getOriginLocation());
     }
 
-    public LocationView getDestinationLocation() {
+    public LocationView getDestination() {
         return new LocationView(shipment.getDestinationLocation());
     }
 

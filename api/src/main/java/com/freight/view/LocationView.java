@@ -39,32 +39,4 @@ public class LocationView {
     public BigDecimal getLon() {
         return location.getLon();
     }
-
-    public String getRoute() {
-        return location.getRoute();
-    }
-
-    public String getLocality() {
-        return location.getLocality();
-    }
-
-    public String getVillage() {
-        return location.getVillage();
-    }
-
-    public String getSubdistrict() {
-        return location.getSubdistrict();
-    }
-
-    public String getCity() {
-        return location.getCity();
-    }
-
-    public String getProvince() {
-        return location.getProvince();
-    }
-
-    public String getCountry() {
-        return location.getCountry();
-    }
 }

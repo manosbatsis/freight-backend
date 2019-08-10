@@ -36,6 +36,14 @@ public class CargoView {
         return cargo.getQuantity();
     }
 
+    public LocationView getOrigin() {
+        return new LocationView(cargo.getOriginLocation());
+    }
+
+    public LocationView getDestination() {
+        return new LocationView(cargo.getDestinationLocation());
+    }
+
     public Instant getDeparture() {
         return cargo.getDeparture();
     }
