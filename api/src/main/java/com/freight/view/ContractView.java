@@ -56,6 +56,14 @@ public class ContractView {
         return contract.getPayout();
     }
 
+    public LocationView getOrigin() {
+        return new LocationView(contract.getOriginLocation());
+    }
+
+    public LocationView getDestination() {
+        return new LocationView(contract.getDestinationLocation());
+    }
+
     public Instant getStartDate() {
         return contract.getStartDate();
     }
