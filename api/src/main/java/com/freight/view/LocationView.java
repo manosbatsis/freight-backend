@@ -32,6 +32,34 @@ public class LocationView {
         return location.getSecondaryName();
     }
 
+    public String getRoute() {
+        return location.getRoute();
+    }
+
+    public String getLocality() {
+        return location.getLocality();
+    }
+
+    public String getVillage() {
+        return location.getVillage();
+    }
+
+    public String getSubdistrict() {
+        return location.getSubdistrict();
+    }
+
+    public String getCity() {
+        return location.getCity();
+    }
+
+    public String getProvince() {
+        return location.getProvince();
+    }
+
+    public String getCountry() {
+        return location.getCountry();
+    }
+
     public BigDecimal getLat() {
         return location.getLat();
     }
