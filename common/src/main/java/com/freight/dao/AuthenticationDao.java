@@ -2,6 +2,7 @@ package com.freight.dao;
 
 import com.freight.exception.FreightException;
 import com.freight.model.Authentication;
+import com.freight.model.Type;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import org.hibernate.query.Query;
@@ -20,7 +21,6 @@ import static com.freight.exception.BadRequest.VERIFICATION_CODE_NOT_EXIST;
 import static com.freight.exception.BadRequest.VERIFICATION_CODE_WRONG;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
 import static com.freight.model.Authentication.Status.UNVERIFIED;
-import static com.freight.model.User.Type.NOT_KNOWN;
 import static com.freight.util.AssertUtil.assertNotNull;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static java.util.Objects.requireNonNull;
@@ -46,7 +46,7 @@ public class AuthenticationDao extends BaseDao<Authentication> {
         return getFirst(getByField("email", email));
     }
 
-    public Optional<Authentication> getByPhone(final Integer phone) {
+    public Optional<Authentication> getByPhone(final Long phone) {
         requireNonNull(phone);
         return getFirst(getByField("phone", phone));
     }
@@ -59,8 +59,9 @@ public class AuthenticationDao extends BaseDao<Authentication> {
      * @return access token
      */
     public String createAuthentication(final Optional<String> emailOptional,
-                                       final Optional<Integer> phoneOptional,
-                                       final String password) {
+                                       final Optional<Long> phoneOptional,
+                                       final String password,
+                                       final Type type) {
         requireNonNull(emailOptional);
         requireNonNull(phoneOptional);
         requireNonNull(password);
@@ -73,13 +74,14 @@ public class AuthenticationDao extends BaseDao<Authentication> {
                 .phone(phoneOptional.orElse(null))
                 .password(pass)
                 .status(UNVERIFIED)
+                .type(type)
                 .verificationCode(verificationCode)
                 .verificationExpiry(Instant.now().plus(1, HOURS))
                 .build();
         getSessionProvider().getSession().persist(authentication);
         getSessionProvider().commitTransaction();
 
-        return createJWT(null, authentication.getGuid(), NOT_KNOWN, UNVERIFIED, authentication.getToken());
+        return createJWT(null, authentication.getGuid(), type, UNVERIFIED, authentication.getToken());
     }
 
     private String generateVerificationToken() {
@@ -96,7 +98,7 @@ public class AuthenticationDao extends BaseDao<Authentication> {
      * @return accessToken
      */
     public String authenticate(final Optional<String> emailOptional,
-                               final Optional<Integer> phoneOptional,
+                               final Optional<Long> phoneOptional,
                                final String password) {
         final Optional<Authentication> authenticationOptional;
         if (emailOptional.isPresent()) {
@@ -115,7 +117,11 @@ public class AuthenticationDao extends BaseDao<Authentication> {
             throw new FreightException(UNAUTHORIZED);
         }
 
-        return createJWT(null, authenticationOptional.get().getGuid(), NOT_KNOWN, UNVERIFIED,
+        return createJWT(
+                null,
+                authenticationOptional.get().getGuid(),
+                authenticationOptional.get().getType(),
+                UNVERIFIED,
                 authenticationOptional.get().getToken());
     }
 

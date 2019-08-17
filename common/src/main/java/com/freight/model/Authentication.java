@@ -27,7 +27,7 @@ public class Authentication {
     private String email;
 
     @Column
-    private Integer phone;
+    private Long phone;
 
     @Column(nullable = false)
     private String password;
@@ -41,6 +41,10 @@ public class Authentication {
     @Column
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @Column
     private String token;
@@ -68,6 +72,7 @@ public class Authentication {
         this.verificationCode = builder.verificationCode;
         this.verificationExpiry = builder.verificationExpiry;
         this.status = builder.status;
+        this.type = builder.type;
         this.token = builder.token;
     }
 
@@ -79,7 +84,7 @@ public class Authentication {
         return this.email;
     }
 
-    public Integer getPhone() {
+    public Long getPhone() {
         return this.phone;
     }
 
@@ -99,6 +104,10 @@ public class Authentication {
         return this.status;
     }
 
+    public Type getType() {
+        return this.type;
+    }
+
     public String getToken() {
         return this.token;
     }
@@ -114,11 +123,12 @@ public class Authentication {
     public static class Builder {
         private String guid = String.valueOf(UUID.randomUUID());
         private String email;
-        private Integer phone;
+        private Long phone;
         private String password;
         private String verificationCode;
         private Instant verificationExpiry;
         private Status status = UNVERIFIED;
+        private Type type;
         private String token = String.valueOf(UUID.randomUUID());
 
         public Builder guid(final String guid) {
@@ -131,7 +141,7 @@ public class Authentication {
             return this;
         }
 
-        public Builder phone(final Integer phone) {
+        public Builder phone(final Long phone) {
             this.phone = phone;
             return this;
         }
@@ -156,6 +166,11 @@ public class Authentication {
             return this;
         }
 
+        public Builder type(final Type type) {
+            this.type = type;
+            return this;
+        }
+
         public Builder token(final String token) {
             this.token = token;
             return this;
@@ -176,6 +191,7 @@ public class Authentication {
                 .append(verificationCode)
                 .append(verificationExpiry)
                 .append(status)
+                .append(type)
                 .append(token)
                 .append(created)
                 .append(lastModified)
@@ -201,6 +217,7 @@ public class Authentication {
                 .append(verificationCode, that.verificationCode)
                 .append(verificationExpiry, that.verificationExpiry)
                 .append(status, that.status)
+                .append(type, that.type)
                 .append(token, that.token)
                 .append(created, that.created)
                 .append(lastModified, that.lastModified)
@@ -217,6 +234,7 @@ public class Authentication {
                 .append("verificationCode", verificationCode)
                 .append("verificationExpiry", verificationExpiry)
                 .append("status", status)
+                .append("type", type)
                 .append("token", token)
                 .append("created", created)
                 .append("lastModified", lastModified)

@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import java.time.Instant;
 
 import static com.freight.model.User.Status.ACTIVE;
-import static com.freight.model.User.Type.NOT_KNOWN;
 
 @Entity
 public class User {
@@ -38,7 +37,7 @@ public class User {
     private String email;
 
     @Column
-    private Integer phone;
+    private Long phone;
 
     @Column
     private Integer companyId;
@@ -58,12 +57,6 @@ public class User {
     @Column
     @UpdateTimestamp
     private Instant lastModified;
-
-    public enum Type {
-        CUSTOMER,
-        TRANSPORTER,
-        NOT_KNOWN
-    }
 
     public enum Status {
         ACTIVE,
@@ -99,7 +92,7 @@ public class User {
         return this.email;
     }
 
-    public Integer getPhone() {
+    public Long getPhone() {
         return this.phone;
     }
 
@@ -128,9 +121,9 @@ public class User {
         private String guid;
         private String username;
         private String email;
-        private Integer phone;
+        private Long phone;
         private Integer companyId;
-        private Type type = NOT_KNOWN;
+        private Type type;
         private Status status = ACTIVE;
 
         public Builder id(final int id) {
@@ -153,7 +146,7 @@ public class User {
             return this;
         }
 
-        public Builder phone(final Integer phone) {
+        public Builder phone(final Long phone) {
             this.phone = phone;
             return this;
         }

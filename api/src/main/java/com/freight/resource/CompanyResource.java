@@ -87,7 +87,7 @@ public class CompanyResource {
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
             sessionProvider.startTransaction();
             final Company company = companyDao.createCompany(companyRequestBody.getName(), companyRequestBody.getType());
-            userDao.updateCompany(userScopeProvider.get().getGuid(), company);
+            userDao.updateCompany(userScopeProvider.get().getGuid(), company.getId());
             sessionProvider.commitTransaction();
             return new CompanyResponse(new CompanyView(company));
         }
