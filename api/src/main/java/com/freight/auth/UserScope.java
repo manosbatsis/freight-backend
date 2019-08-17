@@ -2,7 +2,7 @@ package com.freight.auth;
 
 import com.freight.exception.FreightException;
 import com.freight.model.Authentication;
-import com.freight.model.User;
+import com.freight.model.Type;
 
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ import static com.freight.exception.Unauthorized.UNAUTHORIZED;
 public class UserScope {
 
     private Optional<String> guidOptional = Optional.empty();
-    private User.Type userType;
+    private Type userType;
     private Authentication.Status authenticationStatus;
 
     public boolean isLoggedIn() {
@@ -29,12 +29,12 @@ public class UserScope {
         this.guidOptional = Optional.ofNullable(guid);
     }
 
-    public User.Type setUserType() {
+    public Type setUserType() {
         return userType;
     }
 
     public void setUserType(final String userType) {
-        this.userType = User.Type.valueOf(userType);
+        this.userType = Type.valueOf(userType);
     }
 
     public Authentication.Status getAuthenticationStatus() {

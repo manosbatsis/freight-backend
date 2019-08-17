@@ -2,7 +2,7 @@ package com.freight.auth;
 
 import com.freight.exception.FreightException;
 import com.freight.model.Authentication;
-import com.freight.model.User;
+import com.freight.model.Type;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
@@ -33,7 +33,7 @@ public class JWTUtil {
 
     public static String createJWT(final String username,
                                    final String guid,
-                                   final User.Type type,
+                                   final Type type,
                                    final Authentication.Status status,
                                    final String token) {
         return createJWT(username, guid, type, status, token, null);
@@ -41,7 +41,7 @@ public class JWTUtil {
 
     public static String createJWT(final String username,
                                    final String guid,
-                                   final User.Type type,
+                                   final Type type,
                                    final Authentication.Status status,
                                    final String token,
                                    final Integer expirationInHours) {

@@ -18,6 +18,7 @@ public enum BadRequest implements ResponseError {
     DESTINATION_EMPTY("Destination cannot be empty"),
     DIMENSION_EMPTY("Dimension unit cannot be empty"),
     EMAIL_PHONE_EMPTY("Email and phone number cannot be both empty"),
+    TYPE_EMPTY("Type cannot be empty"),
     ARRIVAL_IN_PAST("Arrival date has to be in future"),
     DEPARTURE_IN_PAST("Departure date has to be in future"),
     DEPARTURE_NOT_BEFORE_ARRIVAL("Departure date has to be before arrival date"),
