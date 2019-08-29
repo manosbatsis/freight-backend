@@ -7,6 +7,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import org.hibernate.query.Query;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -30,6 +32,9 @@ import static org.mindrot.jbcrypt.BCrypt.hashpw;
  * Created by toshikijahja on 6/7/17.
  */
 public class AuthenticationDao extends BaseDao<Authentication> {
+
+    private static Logger logger = LoggerFactory.getLogger(AuthenticationDao.class);
+
 
     @AssistedInject
     public AuthenticationDao(@Assisted final SessionProvider sessionProvider) {
@@ -66,13 +71,14 @@ public class AuthenticationDao extends BaseDao<Authentication> {
         requireNonNull(phoneOptional);
         requireNonNull(password);
         getSessionProvider().startTransaction();
-        final String pass = hashpw(password, BCrypt.gensalt(12));
-        System.out.println("password:" + pass);
+        final String salt = BCrypt.gensalt(12);
+        final String encryptedPassword = hashpw(password, salt);
         final String verificationCode = generateVerificationToken();
         final Authentication authentication = new Authentication.Builder()
                 .email(emailOptional.orElse(null))
                 .phone(phoneOptional.orElse(null))
-                .password(pass)
+                .password(encryptedPassword)
+                .salt(salt)
                 .status(UNVERIFIED)
                 .type(type)
                 .verificationCode(verificationCode)
@@ -113,7 +119,9 @@ public class AuthenticationDao extends BaseDao<Authentication> {
             throw new FreightException(UNAUTHORIZED);
         }
 
-        if (!Objects.equals(authenticationOptional.get().getPassword(), password)) {
+
+        final String encryptedPassword = hashpw(password, authenticationOptional.get().getSalt());
+        if (!Objects.equals(authenticationOptional.get().getPassword(), encryptedPassword)) {
             throw new FreightException(UNAUTHORIZED);
         }
 
