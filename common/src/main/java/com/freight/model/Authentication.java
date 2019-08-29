@@ -50,6 +50,9 @@ public class Authentication {
     private String token;
 
     @Column
+    private String salt;
+
+    @Column
     @CreationTimestamp
     private Instant created;
 
@@ -74,6 +77,7 @@ public class Authentication {
         this.status = builder.status;
         this.type = builder.type;
         this.token = builder.token;
+        this.salt = builder.salt;
     }
 
     public String getGuid() {
@@ -112,6 +116,10 @@ public class Authentication {
         return this.token;
     }
 
+    public String getSalt() {
+        return this.salt;
+    }
+
     public Instant getCreated() {
         return this.created;
     }
@@ -130,6 +138,7 @@ public class Authentication {
         private Status status = UNVERIFIED;
         private Type type;
         private String token = String.valueOf(UUID.randomUUID());
+        private String salt;
 
         public Builder guid(final String guid) {
             this.guid = guid;
@@ -176,6 +185,11 @@ public class Authentication {
             return this;
         }
 
+        public Builder salt(final String salt) {
+            this.salt = salt;
+            return this;
+        }
+
         public Authentication build() {
             return new Authentication(this);
         }
@@ -193,6 +207,7 @@ public class Authentication {
                 .append(status)
                 .append(type)
                 .append(token)
+                .append(salt)
                 .append(created)
                 .append(lastModified)
                 .toHashCode();
@@ -219,6 +234,7 @@ public class Authentication {
                 .append(status, that.status)
                 .append(type, that.type)
                 .append(token, that.token)
+                .append(salt, that.salt)
                 .append(created, that.created)
                 .append(lastModified, that.lastModified)
                 .isEquals();
@@ -236,6 +252,7 @@ public class Authentication {
                 .append("status", status)
                 .append("type", type)
                 .append("token", token)
+                .append("salt", salt)
                 .append("created", created)
                 .append("lastModified", lastModified)
                 .toString();
