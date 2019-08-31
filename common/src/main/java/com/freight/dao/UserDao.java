@@ -8,7 +8,6 @@ import org.hibernate.query.Query;
 import org.testng.internal.Nullable;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.freight.exception.BadRequest.GUID_NOT_EXIST;
 import static com.freight.exception.BadRequest.TYPE_NOT_EXIST;
@@ -35,12 +34,13 @@ public class UserDao extends BaseDao<User> {
      * Either email or phone has to be not null
      * @return created User object
      */
-    public User createUser(@Nullable final String email,
+    public User createUser(final String guid,
+                           @Nullable final String email,
                            @Nullable final Long phone,
                            final Type type) {
         assertNotNull(type, TYPE_NOT_EXIST);
         final User user = new User.Builder()
-                .guid(UUID.randomUUID().toString())
+                .guid(guid)
                 .status(ACTIVE)
                 .email(email)
                 .phone(phone)

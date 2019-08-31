@@ -22,6 +22,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.UUID;
 
 import static com.freight.exception.BadRequest.ACCOUNT_WITH_EMAIL_EXIST;
 import static com.freight.exception.BadRequest.ACCOUNT_WITH_PHONE_EXIST;
@@ -52,13 +53,16 @@ public class AuthenticationResource {
             validateSignUpRequest(authenticationSignUpRequestBody, authenticationDao);
 
             sessionProvider.startTransaction();
+            final String guid = String.valueOf(UUID.randomUUID());
             final String accessToken = authenticationDao.createAuthentication(
+                    guid,
                     authenticationSignUpRequestBody.getEmailOptional(),
                     authenticationSignUpRequestBody.getPhoneOptional(),
                     authenticationSignUpRequestBody.getPassword(),
                     authenticationSignUpRequestBody.getType());
 
             final User user = userDao.createUser(
+                    guid,
                     authenticationSignUpRequestBody.getEmailOptional().orElse(null),
                     authenticationSignUpRequestBody.getPhoneOptional().orElse(null),
                     authenticationSignUpRequestBody.getType());
