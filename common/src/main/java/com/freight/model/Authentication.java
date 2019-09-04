@@ -129,7 +129,7 @@ public class Authentication {
     }
 
     public static class Builder {
-        private String guid = String.valueOf(UUID.randomUUID());
+        private String guid;
         private String email;
         private Long phone;
         private String password;

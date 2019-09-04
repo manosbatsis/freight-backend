@@ -63,7 +63,8 @@ public class AuthenticationDao extends BaseDao<Authentication> {
      * @param password
      * @return access token
      */
-    public String createAuthentication(final Optional<String> emailOptional,
+    public String createAuthentication(final String guid,
+                                       final Optional<String> emailOptional,
                                        final Optional<Long> phoneOptional,
                                        final String password,
                                        final Type type) {
@@ -75,6 +76,7 @@ public class AuthenticationDao extends BaseDao<Authentication> {
         final String encryptedPassword = hashpw(password, salt);
         final String verificationCode = generateVerificationToken();
         final Authentication authentication = new Authentication.Builder()
+                .guid(guid)
                 .email(emailOptional.orElse(null))
                 .phone(phoneOptional.orElse(null))
                 .password(encryptedPassword)

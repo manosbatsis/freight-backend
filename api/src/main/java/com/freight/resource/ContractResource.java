@@ -11,9 +11,13 @@ import com.freight.exception.FreightException;
 import com.freight.model.Cargo;
 import com.freight.model.CargoContract;
 import com.freight.model.Contract;
+import com.freight.model.Type;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
+import com.freight.request_body.ContractRequestBody;
 import com.freight.response.ContractListResponse;
+import com.freight.response.CargoContractResponse;
+import com.freight.view.CargoContractView;
 import com.freight.view.ContractView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,8 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -33,8 +39,19 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static com.freight.exception.BadRequest.CARGO_NOT_EXIST;
+import static com.freight.exception.BadRequest.CONTRACT_NOT_EXIST;
+import static com.freight.exception.BadRequest.CONTRACT_NOT_FOR_USER;
+import static com.freight.exception.BadRequest.CONTRACT_STATUS_NOT_ALLOWED;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
+import static com.freight.model.CargoContract.Status.CUSTOMER_ACCEPTED;
+import static com.freight.model.CargoContract.Status.CUSTOMER_ACCEPT_OTHER_CONTRACT;
+import static com.freight.model.CargoContract.Status.CUSTOMER_DECLINED;
+import static com.freight.model.CargoContract.Status.CUSTOMER_EXPIRED;
+import static com.freight.model.CargoContract.Status.CUSTOMER_NEGOTIATE;
+import static com.freight.model.CargoContract.Status.TRANSPORTER_EXPIRED;
+import static com.freight.model.CargoContract.Status.TRANSPORTER_OFFERED;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -43,6 +60,10 @@ import static java.util.stream.Collectors.toMap;
 public class ContractResource {
 
     private static Logger logger = LoggerFactory.getLogger(ContractResource.class);
+    private static List<CargoContract.Status> CUSTOMER_STATUS = asList(
+            CUSTOMER_ACCEPTED, CUSTOMER_DECLINED, CUSTOMER_EXPIRED, CUSTOMER_NEGOTIATE);
+    private static List<CargoContract.Status> TRANSPORTER_STATUS = asList(TRANSPORTER_EXPIRED, TRANSPORTER_OFFERED);
+
 
     @Inject
     private DaoProvider daoProvider;
@@ -82,6 +103,60 @@ public class ContractResource {
                     .collect(toList());
 
             return new ContractListResponse(contractViews);
+        }
+    }
+
+    @POST
+    @ApiOperation(value = "Update contract status")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @UserAuth(optional = false)
+    public CargoContractResponse updateContractStatus(final ContractRequestBody contractRequestBody) {
+        try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
+            final CargoContractDao cargoContractDao = daoProvider.getDaoFactory().getCargoContractDao(sessionProvider);
+            final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
+
+            final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
+                    .orElseThrow(() -> new FreightException(USER_NOT_EXIST));
+
+            final CargoContract cargoContract = cargoContractDao.getByContractId(contractRequestBody.getContractId())
+                    .orElseThrow(() -> new FreightException(CONTRACT_NOT_EXIST));
+
+            validateRequest(cargoContract, user, contractRequestBody.getStatus());
+
+            sessionProvider.startTransaction();
+            cargoContractDao.updateStatusByContractId(contractRequestBody.getStatus(), cargoContract.getContractId());
+            if (contractRequestBody.getStatus() == CUSTOMER_ACCEPTED) {
+                // update contracts for cargo to CUSTOMER_ACCEPT_OTHER_CONTRACT
+                cargoContractDao.updateStatusByCargoIdExcludeContractId(
+                        CUSTOMER_ACCEPT_OTHER_CONTRACT, cargoContract.getCargoId(), cargoContract.getContractId());
+            }
+            sessionProvider.commitTransaction();
+
+            return new CargoContractResponse(new CargoContractView(cargoContract));
+        }
+    }
+
+    private void validateRequest(final CargoContract cargoContract,
+                                 final User user,
+                                 final CargoContract.Status statusRequest) {
+        // User is CUSTOMER
+        if (user.getType() == Type.CUSTOMER) {
+            if (cargoContract.getCustomerId() != user.getId()) {
+                throw new FreightException(CONTRACT_NOT_FOR_USER);
+            }
+            if (!CUSTOMER_STATUS.contains(statusRequest)) {
+                throw new FreightException(CONTRACT_STATUS_NOT_ALLOWED);
+            }
+
+        // User is TRANSPORTER
+        } else if (user.getType() == Type.TRANSPORTER) {
+            if (cargoContract.getTransporterId() != user.getId()) {
+                throw new FreightException(CONTRACT_NOT_FOR_USER);
+            }
+            if (!TRANSPORTER_STATUS.contains(statusRequest)) {
+                throw new FreightException(CONTRACT_STATUS_NOT_ALLOWED);
+            }
         }
     }
 }
