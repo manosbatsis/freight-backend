@@ -61,13 +61,18 @@ VALUES
 ('DAP', 'Delivered At Place'),
 ('DDP', 'Delivered Duty Paid');
 
-INSERT INTO `Authentication` (`guid`, `email`, `phone`, `password`, `verificationCode`, `verificationExpiry`, `status`, `token`, `created`, `lastModified`)
+INSERT INTO `Authentication` (`guid`, `email`, `phone`, `password`, `verificationCode`, `verificationExpiry`, `status`, `type`, `token`, `salt`, `created`, `lastModified`)
 VALUES
-	('03b3dab9-3bde-4e3b-a1e8-4573aad4665b', 'toshikijahja@gmail.com', NULL, '$2a$12$3RejsWRN97Ow6PEBEwpId.ZoL8qYLWIMBLv8YL1VN64SB8OL268Za', '1846', '2019-07-08 02:45:17', 'VERIFIED', 'b86937ab-1a3d-4ff8-9b71-c994ca50bd73', '2019-07-08 01:45:17', '2019-07-07 18:46:58');
+	('0ca57a42-d1a4-490c-bc1d-733a4a2b1cf6', NULL, 4086919384, '$2a$12$W4qTL.cGHAicDleFJnb9puYNmVJ3DFM2YCwE88MtojQ5eravPxGUS', '0478', '2019-09-04 05:47:55', 'VERIFIED', 'CUSTOMER', 'f133c5ca-4c9f-4441-9253-d8e01f8eb0ec', '$2a$12$W4qTL.cGHAicDleFJnb9pu', '2019-09-04 04:47:55', '2019-09-03 21:54:08');
 
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES
-	(1, '03b3dab9-3bde-4e3b-a1e8-4573aad4665b', NULL, 'toshikijahja@gmail.com', NULL, NULL, 'CUSTOMER', 'ACTIVE', '2019-07-08 01:46:59', '2019-07-08 01:46:59');
+	(1, '0ca57a42-d1a4-490c-bc1d-733a4a2b1cf6', NULL, NULL, 4086919384, 3, 'CUSTOMER', 'ACTIVE', '2019-09-04 04:47:55', '2019-09-03 21:47:55');
+
+
+INSERT INTO `Authentication` (`guid`, `email`, `phone`, `password`, `verificationCode`, `verificationExpiry`, `status`, `token`, `created`, `lastModified`)
+VALUES
+	('03b3dab9-3bde-4e3b-a1e8-4573aad4665b', 'toshikijahja@gmail.com', NULL, '$2a$12$3RejsWRN97Ow6PEBEwpId.ZoL8qYLWIMBLv8YL1VN64SB8OL268Za', '1846', '2019-07-08 02:45:17', 'VERIFIED', 'b86937ab-1a3d-4ff8-9b71-c994ca50bd73', '2019-07-08 01:45:17', '2019-07-07 18:46:58');
 
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES

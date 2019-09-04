@@ -60,6 +60,7 @@ public class CargoContract {
         CUSTOMER_NEGOTIATE,
         CUSTOMER_EXPIRED,
         TRANSPORTER_EXPIRED,
+        CUSTOMER_ACCEPT_OTHER_CONTRACT,
     }
 
     public CargoContract() {}
