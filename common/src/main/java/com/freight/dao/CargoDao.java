@@ -7,6 +7,7 @@ import com.freight.model.ContainerType;
 import com.freight.model.Location;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
+import org.hibernate.query.Query;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.freight.dao.BaseDao.Sort.DESC;
+import static com.freight.exception.BadRequest.STATUS_NOT_EXIST;
+import static com.freight.util.AssertUtil.assertNotNull;
 import static io.jsonwebtoken.lang.Collections.isEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
@@ -83,5 +86,19 @@ public class CargoDao extends BaseDao<Cargo> {
         inputParam.put("status", statusList);
 
         return getByFieldSortedAndPaginated("userId = :userId AND status IN :status", inputParam, "id", DESC, start, limit);
+    }
+
+    public void updateCargoStatusShipmentIdAndContractId(final int cargoId,
+                                                         final Cargo.Status status,
+                                                         final int shipmentId,
+                                                         final int contractId) {
+        assertNotNull(status, STATUS_NOT_EXIST);
+        final Query query = getSessionProvider().getSession().createQuery(
+                "UPDATE " + clazz.getName() + " SET status = :status, shipmentId = :shipmentId, contractId = :contractId WHERE id = :cargoId");
+        query.setParameter("cargoId", cargoId);
+        query.setParameter("status", status);
+        query.setParameter("shipmentId", shipmentId);
+        query.setParameter("contractId", contractId);
+        query.executeUpdate();
     }
 }

@@ -15,6 +15,7 @@ import static com.freight.dao.BaseDao.Sort.DESC;
 import static com.freight.exception.BadRequest.DESTINATION_EMPTY;
 import static com.freight.exception.BadRequest.ORIGIN_EMPTY;
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
+import static com.freight.model.Shipment.ShipStatus.DOCKING_ORIGIN;
 import static com.freight.util.AssertUtil.assertNotNull;
 import static io.jsonwebtoken.lang.Collections.isEmpty;
 import static java.util.Collections.emptyList;
@@ -37,8 +38,8 @@ public class ShipmentDao extends BaseDao<Shipment> {
     public Shipment createShipment(final Ship ship,
                                    final Location originLocation,
                                    final Location destinationLocation,
-                                   final long departure,
-                                   final long arrival) {
+                                   final Instant departure,
+                                   final Instant arrival) {
         assertNotNull(ship, SHIP_NOT_EXIST);
         assertNotNull(originLocation, ORIGIN_EMPTY);
         assertNotNull(destinationLocation, DESTINATION_EMPTY);
@@ -47,8 +48,10 @@ public class ShipmentDao extends BaseDao<Shipment> {
                 .ship(ship)
                 .originLocation(originLocation)
                 .destinationLocation(destinationLocation)
-                .departure(Instant.ofEpochSecond(departure))
-                .arrival(Instant.ofEpochSecond(arrival))
+                .departure(departure)
+                .arrival(arrival)
+                .status(Shipment.Status.UPCOMING)
+                .shipStatus(DOCKING_ORIGIN)
                 .build();
         getSessionProvider().getSession().persist(shipment);
         getSessionProvider().commitTransaction();
