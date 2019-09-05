@@ -3,11 +3,13 @@ package com.freight.view;
 import com.freight.model.CargoContract;
 import com.freight.model.Contract;
 import com.freight.model.Payout;
+import com.freight.model.ShipFacility;
 import com.freight.model.TimeUnit;
 import com.freight.model.Type;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 
 /**
@@ -17,11 +19,14 @@ public class ContractView {
 
     private final Contract contract;
     private final CargoContract cargoContract;
+    private final List<ShipFacility> shipFacilities;
 
     public ContractView(final Contract contract,
-                        final CargoContract cargoContract) {
+                        final CargoContract cargoContract,
+                        final List<ShipFacility> shipFacilities) {
         this.contract = contract;
         this.cargoContract = cargoContract;
+        this.shipFacilities = shipFacilities;
     }
 
     public int getId() {
@@ -29,7 +34,7 @@ public class ContractView {
     }
 
     public ShipView getShip() {
-        return new ShipView(contract.getShip());
+        return new ShipView(contract.getShip(), shipFacilities);
     }
 
     public Integer getShipmentId() {
@@ -154,10 +159,6 @@ public class ContractView {
 
     public int getCargoId() {
         return cargoContract.getCargoId();
-    }
-
-    public int getContractId() {
-        return cargoContract.getContractId();
     }
 
     public int getCustomerId() {

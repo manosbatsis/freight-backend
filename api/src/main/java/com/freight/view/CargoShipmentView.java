@@ -1,7 +1,10 @@
 package com.freight.view;
 
 import com.freight.model.Cargo;
+import com.freight.model.ShipFacility;
 import com.freight.model.Shipment;
+
+import java.util.List;
 
 
 /**
@@ -11,11 +14,14 @@ public class CargoShipmentView {
 
     private final Cargo cargo;
     private final Shipment shipment;
+    private final List<ShipFacility> shipFacilities;
 
     public CargoShipmentView(final Cargo cargo,
-                             final Shipment shipment) {
+                             final Shipment shipment,
+                             final List<ShipFacility> shipFacilities) {
         this.cargo = cargo;
         this.shipment = shipment;
+        this.shipFacilities = shipFacilities;
     }
 
     public CargoView getCargo() {
@@ -23,6 +29,6 @@ public class CargoShipmentView {
     }
 
     public ShipmentView getShipment() {
-        return new ShipmentView(shipment);
+        return new ShipmentView(shipment, shipFacilities);
     }
 }

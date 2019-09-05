@@ -24,6 +24,11 @@ public class CargoContractDao extends BaseDao<CargoContract> {
         super(sessionProvider, CargoContract.class);
     }
 
+    public Optional<CargoContract> getByCargoIdOptional(final int cargoId) {
+        final List<CargoContract> results = getByCargoIdSortedAndPaginated(cargoId, 0, 1);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
     public List<CargoContract> getByCargoIdSortedAndPaginated(final int cargoId,
                                                               final int start,
                                                               final int limit) {

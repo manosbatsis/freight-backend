@@ -63,11 +63,11 @@ VALUES
 
 INSERT INTO `Authentication` (`guid`, `email`, `phone`, `password`, `verificationCode`, `verificationExpiry`, `status`, `type`, `token`, `salt`, `created`, `lastModified`)
 VALUES
-	('0ca57a42-d1a4-490c-bc1d-733a4a2b1cf6', NULL, 4086919384, '$2a$12$W4qTL.cGHAicDleFJnb9puYNmVJ3DFM2YCwE88MtojQ5eravPxGUS', '0478', '2019-09-04 05:47:55', 'VERIFIED', 'CUSTOMER', 'f133c5ca-4c9f-4441-9253-d8e01f8eb0ec', '$2a$12$W4qTL.cGHAicDleFJnb9pu', '2019-09-04 04:47:55', '2019-09-03 21:54:08');
+	('0ca57a42-d1a4-490c-bc1d-733a4a2b1cf6', NULL, 6281310123321, '$2a$12$W4qTL.cGHAicDleFJnb9puYNmVJ3DFM2YCwE88MtojQ5eravPxGUS', '0478', '2019-09-04 05:47:55', 'VERIFIED', 'CUSTOMER', 'f133c5ca-4c9f-4441-9253-d8e01f8eb0ec', '$2a$12$W4qTL.cGHAicDleFJnb9pu', '2019-09-04 04:47:55', '2019-09-03 21:54:08');
 
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES
-	(1, '0ca57a42-d1a4-490c-bc1d-733a4a2b1cf6', NULL, NULL, 4086919384, 3, 'CUSTOMER', 'ACTIVE', '2019-09-04 04:47:55', '2019-09-03 21:47:55');
+	(1, '0ca57a42-d1a4-490c-bc1d-733a4a2b1cf6', NULL, NULL, 6281310123321, 3, 'CUSTOMER', 'ACTIVE', '2019-09-04 04:47:55', '2019-09-03 21:47:55');
 
 
 INSERT INTO `Authentication` (`guid`, `email`, `phone`, `password`, `verificationCode`, `verificationExpiry`, `status`, `token`, `created`, `lastModified`)
@@ -156,7 +156,7 @@ VALUES
 	(10, 3, 3, 2, 750000000.00, 'NOT_USED', 'RP', 1, 1, 2, '2019-07-01', '2019-10-01', 'LUMPSUM', 'LIFO', 3, 'SHIP_OWNER', NULL, 'SHIP_OWNER', NULL, 'CUSTOMER', 'NONE', 1, 'CUSTOMER', NULL, 'NOT_USED', NULL, NULL, NULL, 'NOT_USED', 'DHALFD', 'SHINC', '2019-07-15 21:33:27', '2019-08-09 22:44:58'),
 	(11, 4, 4, 2, 400000000.00, 'NOT_USED', 'RP', 2, 1, 2, '2019-07-01', '2019-07-08', 'CHARTER', 'FIOST', 10, 'AS_ORDER', NULL, 'OTHER_PARTY', 'PT. Aman Jaya', 'CUSTOMER', 'TRANSPORTER', 2, 'TRANSPORTER', 1.00, 'DAY', NULL, NULL, 30, 'HOUR', 'NOT_USED', 'NOT_USED', '2019-07-15 21:33:27', '2019-08-09 22:44:57'),
 	(12, 5, 5, 2, 5000.00, 'TON', 'RP', 1, 1, 2, '2019-06-15', '2019-06-25', 'LUMPSUM', 'FILO', 11, 'AS_ORDER', NULL, 'AS_ORDER', NULL, 'NONE', 'NONE', 1, 'CUSTOMER', NULL, 'NOT_USED', 2, 2, 4, 'DAY', 'NOT_USED', 'SHEX', '2019-07-15 21:33:27', '2019-08-09 22:44:55'),
-	(13, 6, 6, 2, 5000.00, 'M3', 'RP', 2, 1, 2, '2019-06-15', '2019-06-20', 'CHARTER', 'FILO', 12, 'OTHER_PARTY', 'PT. Makmur Sentosa', 'OTHER_PARTY', 'PT. Sehat Abadi Jaya', 'CUSTOMER', 'CUSTOMER', 2, 'CUSTOMER', 1.00, 'WEEK', NULL, NULL, 2, 'WEEK', 'DHALFD', 'SHEX', '2019-07-15 21:33:27', '2019-08-09 22:44:54');
+	(13, 6, 6, 2, 5000.00, 'M3', 'RP', 2, 1, 2, '2019-06-15', '2019-06-20', 'CHARTER', 'FILO', 11, 'OTHER_PARTY', 'PT. Makmur Sentosa', 'OTHER_PARTY', 'PT. Sehat Abadi Jaya', 'CUSTOMER', 'CUSTOMER', 2, 'CUSTOMER', 1.00, 'WEEK', NULL, NULL, 2, 'WEEK', 'DHALFD', 'SHEX', '2019-07-15 21:33:27', '2019-08-09 22:44:54');
 
 INSERT INTO `Shipment` (`id`, `shipId`, `originLocationId`, `destinationLocationId`, `departure`, `arrival`, `status`, `shipStatus`, `created`, `lastModified`)
 VALUES
@@ -166,3 +166,28 @@ VALUES
 	(4, 4, 1, 2, '2019-07-01', '2019-07-06', 'LIVE', 'DISCHARGE', '2019-08-09 22:23:37', '2019-08-09 22:38:45'),
 	(5, 5, 1, 2, '2019-07-01', '2019-07-06', 'LIVE', 'DOCKING_DESTINATION', '2019-08-09 22:23:37', '2019-08-09 22:53:07'),
 	(6, 6, 1, 2, '2019-06-01', '2019-06-15', 'COMPLETED', 'DISCHARGE', '2019-08-09 22:23:37', '2019-08-09 22:44:23');
+
+INSERT INTO `Payout` (`id`, `contractSigned`, `dockedOrigin`, `loaded`, `dockedDestination`, `discharged`, `created`, `lastModified`)
+VALUES
+	(1, 50.00, 0.00, 0.00, 0.00, 50.00, '2019-09-03 22:48:51', '2019-09-03 22:49:11'),
+	(2, 25.00, 25.00, 25.00, 25.00, 0.00, '2019-09-03 22:48:51', '2019-09-03 22:49:05');
+
+INSERT INTO `ShipAgent` (`id`, `assigner`, `customerShare`, `transporterShare`, `created`, `lastModified`)
+VALUES
+	(1, 'CUSTOMER', 100.00, 0.00, '2019-09-03 22:49:51', '2019-09-03 22:49:56'),
+	(2, 'TRANSPORTER', 50.00, 50.00, '2019-09-03 22:49:52', '2019-09-03 22:50:00');
+
+INSERT INTO `ShipFacility` (`shipId`, `facilityId`, `description`, `created`, `lastModified`)
+VALUES
+	(1, 1, NULL, '2019-09-04 20:20:59', '2019-09-04 20:20:59'),
+	(1, 2, NULL, '2019-09-04 20:21:00', '2019-09-04 20:21:00'),
+	(1, 3, '100 ton', '2019-09-04 20:21:03', '2019-09-04 20:22:23'),
+	(1, 4, NULL, '2019-09-04 20:21:04', '2019-09-04 20:21:04'),
+	(2, 5, NULL, '2019-09-04 20:21:08', '2019-09-04 20:21:08'),
+	(4, 1, NULL, '2019-09-04 20:21:18', '2019-09-04 20:21:18'),
+	(4, 6, NULL, '2019-09-04 20:21:14', '2019-09-04 20:21:14'),
+	(5, 7, NULL, '2019-09-04 20:21:31', '2019-09-04 20:21:31'),
+	(5, 8, NULL, '2019-09-04 20:21:34', '2019-09-04 20:21:34'),
+	(5, 9, '150 litre/hour', '2019-09-04 20:21:36', '2019-09-04 20:22:58'),
+	(5, 10, NULL, '2019-09-04 20:23:04', '2019-09-04 20:23:04'),
+	(6, 11, NULL, '2019-09-04 20:23:06', '2019-09-04 20:23:06');

@@ -9,11 +9,13 @@ import com.freight.dao.CargoTypeDao;
 import com.freight.dao.CompanyDao;
 import com.freight.dao.ContainerTypeDao;
 import com.freight.dao.ContractDao;
+import com.freight.dao.FacilityDao;
 import com.freight.dao.IdentificationDao;
 import com.freight.dao.LocationDao;
 import com.freight.dao.SessionProvider;
 import com.freight.dao.ShipCargoTypeDao;
 import com.freight.dao.ShipDao;
+import com.freight.dao.ShipFacilityDao;
 import com.freight.dao.ShipmentDao;
 import com.freight.dao.UserDao;
 
@@ -31,10 +33,12 @@ public interface DaoFactory {
     CompanyDao getCompanyDao(final SessionProvider sessionProvider);
     ContainerTypeDao getContainerTypeDao(final SessionProvider sessionProvider);
     ContractDao getContractDao(final SessionProvider sessionProvider);
+    FacilityDao getFacilityDao(final SessionProvider sessionProvider);
     IdentificationDao getIdentificationDao(final SessionProvider sessionProvider);
     LocationDao getLocationDao(final SessionProvider sessionProvider);
     ShipDao getShipDao(final SessionProvider sessionProvider);
     ShipCargoTypeDao getShipCargoTypeDao(final SessionProvider sessionProvider);
+    ShipFacilityDao getShipFacilityDao(final SessionProvider sessionProvider);
     ShipmentDao getShipmentDao(final SessionProvider sessionProvider);
     UserDao getUserDao(final SessionProvider sessionProvider);
 }

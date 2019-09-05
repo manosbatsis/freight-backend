@@ -80,6 +80,14 @@ public class BaseDao<T> {
     }
 
     @SuppressWarnings("unchecked")
+    protected Optional<T> getByFieldsOptional(final String whereQuery, final Map<String, Object> inputParam) {
+        requireNonNull(whereQuery);
+        requireNonNull(inputParam);
+        final List<T> results = getByFields(whereQuery, inputParam);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @SuppressWarnings("unchecked")
     protected List<T> getByFields(final String whereQuery, final Map<String, Object> inputParam) {
         requireNonNull(whereQuery);
         requireNonNull(inputParam);

@@ -8,16 +8,21 @@ import com.freight.auth.UserAuth;
 import com.freight.auth.UserScope;
 import com.freight.dao.CargoTypeDao;
 import com.freight.dao.CompanyDao;
+import com.freight.dao.FacilityDao;
 import com.freight.dao.SessionProvider;
 import com.freight.dao.ShipCargoTypeDao;
 import com.freight.dao.ShipDao;
+import com.freight.dao.ShipFacilityDao;
 import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
 import com.freight.model.CargoType;
 import com.freight.model.Company;
+import com.freight.model.Facility;
 import com.freight.model.Ship;
+import com.freight.model.ShipFacility;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
+import com.freight.request_body.ShipFacilityRequestBody;
 import com.freight.request_body.ShipRequestBody;
 import com.freight.response.ShipResponse;
 import com.freight.view.ShipView;
@@ -35,12 +40,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static com.freight.exception.BadRequest.CARGO_TYPE_NOT_EXIST;
 import static com.freight.exception.BadRequest.COMPANY_NOT_EXIST;
+import static com.freight.exception.BadRequest.FACILITY_NOT_EXIST;
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.Unauthorized.UNAUTHORIZED;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Api(tags = {"user", "public"})
 @Path("/ship")
@@ -54,14 +64,16 @@ public class ShipResource {
 
     @GET
     @ApiOperation(value = "Get ship by shipId")
-    @Path("{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public ShipResponse getShip(@PathParam("id") final int shipId) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final ShipDao shipDao = daoProvider.getDaoFactory().getShipDao(sessionProvider);
+            final ShipFacilityDao shipFacilityDao = daoProvider.getDaoFactory().getShipFacilityDao(sessionProvider);
             final Ship ship = shipDao.getByIdOptional(shipId)
                     .orElseThrow(() -> new FreightException(SHIP_NOT_EXIST));
-            return new ShipResponse(new ShipView(ship));
+            final List<ShipFacility> shipFacilities = shipFacilityDao.getByShipId(ship.getId());
+            return new ShipResponse(new ShipView(ship, shipFacilities));
         }
     }
 
@@ -76,6 +88,8 @@ public class ShipResource {
             final CompanyDao companyDao = daoProvider.getDaoFactory().getCompanyDao(sessionProvider);
             final ShipDao shipDao = daoProvider.getDaoFactory().getShipDao(sessionProvider);
             final ShipCargoTypeDao shipCargoTypeDao = daoProvider.getDaoFactory().getShipCargoTypeDao(sessionProvider);
+            final FacilityDao facilityDao = daoProvider.getDaoFactory().getFacilityDao(sessionProvider);
+            final ShipFacilityDao shipFacilityDao = daoProvider.getDaoFactory().getShipFacilityDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
 
             // Verify if user's company match ship's company
@@ -101,6 +115,15 @@ public class ShipResource {
                 throw new FreightException(CARGO_TYPE_NOT_EXIST);
             }
 
+            // Validate ship facilities
+            final List<Integer> facilityIds = shipRequestBody.getShipFacilities().stream()
+                    .map(ShipFacilityRequestBody::getFacilityId).collect(toList());
+            final List<Facility> facilities = facilityDao.getByIds(facilityIds);
+            if (facilities.size() != shipRequestBody.getShipFacilities().size()) {
+                throw new FreightException(FACILITY_NOT_EXIST);
+            }
+            final Map<Integer, Facility> facilityById = facilities.stream().collect(toMap(Facility::getId, Function.identity()));
+
             sessionProvider.startTransaction();
             final Ship ship = shipDao.createShip(
                     shipRequestBody.getName(),
@@ -108,8 +131,10 @@ public class ShipResource {
                     shipRequestBody.getYearBuiltOptional().orElse(null),
                     shipRequestBody.getGrossTonnageOptional().orElse(null));
             shipCargoTypeDao.createShipCargoTypes(ship, cargoTypes);
+            final List<ShipFacility> shipFacilities = shipFacilityDao.createShipFacilities(
+                    ship.getId(), shipRequestBody.getShipFacilities(), facilityById);
             sessionProvider.commitTransaction();
-            return new ShipResponse(new ShipView(ship));
+            return new ShipResponse(new ShipView(ship, shipFacilities));
         }
     }
 }
