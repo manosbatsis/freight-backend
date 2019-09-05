@@ -7,12 +7,14 @@ import com.freight.dao.CargoDao;
 import com.freight.dao.ContractDao;
 import com.freight.dao.SessionProvider;
 import com.freight.dao.ShipFacilityDao;
+import com.freight.dao.ShipmentDao;
 import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
 import com.freight.model.Cargo;
 import com.freight.model.CargoContract;
 import com.freight.model.Contract;
 import com.freight.model.ShipFacility;
+import com.freight.model.Shipment;
 import com.freight.model.Type;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
@@ -126,7 +128,10 @@ public class ContractResource {
     @UserAuth(optional = false)
     public CargoContractResponse updateContractStatus(final ContractRequestBody contractRequestBody) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
+            final CargoDao cargoDao = daoProvider.getDaoFactory().getCargoDao(sessionProvider);
             final CargoContractDao cargoContractDao = daoProvider.getDaoFactory().getCargoContractDao(sessionProvider);
+            final ContractDao contractDao = daoProvider.getDaoFactory().getContractDao(sessionProvider);
+            final ShipmentDao shipmentDao = daoProvider.getDaoFactory().getShipmentDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
 
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
@@ -140,9 +145,7 @@ public class ContractResource {
             sessionProvider.startTransaction();
             cargoContractDao.updateStatusByContractId(contractRequestBody.getStatus(), cargoContract.getContractId());
             if (contractRequestBody.getStatus() == CUSTOMER_ACCEPTED) {
-                // update contracts for cargo to CUSTOMER_ACCEPT_OTHER_CONTRACT
-                cargoContractDao.updateStatusByCargoIdExcludeContractId(
-                        CUSTOMER_ACCEPT_OTHER_CONTRACT, cargoContract.getCargoId(), cargoContract.getContractId());
+                contractAccepted(cargoDao, cargoContractDao, contractDao, shipmentDao, cargoContract);
             }
             sessionProvider.commitTransaction();
 
@@ -171,5 +174,30 @@ public class ContractResource {
                 throw new FreightException(CONTRACT_STATUS_NOT_ALLOWED);
             }
         }
+    }
+
+    private void contractAccepted(final CargoDao cargoDao,
+                                  final CargoContractDao cargoContractDao,
+                                  final ContractDao contractDao,
+                                  final ShipmentDao shipmentDao,
+                                  final CargoContract cargoContract) {
+        final Contract contract = contractDao.getByIdOptional(cargoContract.getContractId())
+                .orElseThrow(() -> new FreightException(CONTRACT_NOT_EXIST));
+        // Create shipment
+        final Shipment shipment = shipmentDao.createShipment(
+                contract.getShip(),
+                contract.getOriginLocation(),
+                contract.getDestinationLocation(),
+                contract.getStartDate(),
+                contract.getEndDate());
+        // Update contract with shipmentId
+        contractDao.updateContractShipmentId(contract.getId(), shipment.getId());
+        // Update cargo status to RESERVED and update shipmentId
+        cargoDao.updateCargoStatusShipmentIdAndContractId(cargoContract.getCargoId(), Cargo.Status.RESERVED, shipment.getId(), contract.getId());
+        // Update other contracts for cargo to CUSTOMER_ACCEPT_OTHER_CONTRACT
+        cargoContractDao.updateStatusByCargoIdExcludeContractId(
+                CUSTOMER_ACCEPT_OTHER_CONTRACT, cargoContract.getCargoId(), cargoContract.getContractId());
+
+        // TODO cancel all shipment using same ship during start date - end date / send notification asking to change ship
     }
 }
