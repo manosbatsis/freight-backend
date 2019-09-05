@@ -11,6 +11,7 @@ public enum BadRequest implements ResponseError {
     CARGO_NOT_EXIST("Cargo does not exist"),
     CARGO_STATUS_NOT_EXIST("Cargo status does not exist"),
     CARGO_TYPE_NOT_EXIST("Cargo type does not exist"),
+    FACILITY_NOT_EXIST("Facility does not exist"),
     COMPANY_NAME_NOT_EXIST("Company name does not exist"),
     COMPANY_NOT_EXIST("Company does not exist"),
     CONTAINER_TYPE_NOT_EXIST("Container type does not exist"),

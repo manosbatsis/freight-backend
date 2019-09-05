@@ -33,6 +33,9 @@ public class ShipRequestBody implements Serializable {
     @ApiModelProperty(value = "Cargo type that can be shipped")
     private List<String> cargoTypes = emptyList();
 
+    @ApiModelProperty(value = "Ship facilities available")
+    private List<ShipFacilityRequestBody> shipFacilities = emptyList();
+
     public String getName() {
         return name;
     }
@@ -51,5 +54,9 @@ public class ShipRequestBody implements Serializable {
 
     public List<String> getCargoTypes() {
         return cargoTypes;
+    }
+
+    public List<ShipFacilityRequestBody> getShipFacilities() {
+        return shipFacilities;
     }
 }

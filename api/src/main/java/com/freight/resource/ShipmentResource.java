@@ -4,9 +4,11 @@ import com.freight.auth.UserAuth;
 import com.freight.auth.UserScope;
 import com.freight.dao.CargoShipmentDao;
 import com.freight.dao.SessionProvider;
+import com.freight.dao.ShipFacilityDao;
 import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
 import com.freight.model.CargoShipment;
+import com.freight.model.ShipFacility;
 import com.freight.model.Shipment;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
@@ -24,9 +26,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"user", "public"})
@@ -49,6 +54,7 @@ public class ShipmentResource {
             @DefaultValue("20") @QueryParam("limit") final int limit) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final CargoShipmentDao cargoShipmentDao = daoProvider.getDaoFactory().getCargoShipmentDao(sessionProvider);
+            final ShipFacilityDao shipFacilityDao = daoProvider.getDaoFactory().getShipFacilityDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
 
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
@@ -61,8 +67,20 @@ public class ShipmentResource {
 
             final List<CargoShipment> cargoShipments = cargoShipmentDao.getByUserIdAndShipmentStatusListSortedAndPaginated(
                     user.getId(), shipmentStatusList, start, limit);
+
+            final List<Integer> shipIds = cargoShipments.stream()
+                    .map(cargoShipment -> cargoShipment.getShipment().getShip().getId())
+                    .collect(toList());
+            final List<ShipFacility> shipFacilities = shipFacilityDao.getByShipIds(shipIds);
+            final Map<Integer, List<ShipFacility>> shipFacilitiesByShipId = shipFacilities.stream().collect(groupingBy(ShipFacility::getShipId));
+
             final List<CargoShipmentView> cargoShipmentViews = cargoShipments.stream()
-                    .map(cargoShipment -> new CargoShipmentView(cargoShipment.getCargo(), cargoShipment.getShipment()))
+                    .map(cargoShipment -> new CargoShipmentView(
+                            cargoShipment.getCargo(),
+                            cargoShipment.getShipment(),
+                            shipFacilitiesByShipId.containsKey(cargoShipment.getShipment().getShip().getId())
+                                    ? shipFacilitiesByShipId.get(cargoShipment.getShipment().getShip().getId())
+                                    : emptyList()))
                     .collect(toList());
 
             return new CargoShipmentListResponse(cargoShipmentViews);

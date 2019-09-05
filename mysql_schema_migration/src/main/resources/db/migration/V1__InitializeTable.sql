@@ -119,6 +119,41 @@ CREATE TABLE `BulkType` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `Facility` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `displayName` varchar(256) DEFAULT NULL,
+  `type` varchar(128) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `Facility` (`displayName`, `type`)
+VALUES
+    ('Rampdoor', 'Rampdoor'),
+    ('Side Board Door', 'Side Board Door'),
+    ('Crane', 'Crane'),
+    ('Side Board', 'Side Board'),
+    ('Double Hull', 'Double Hull'),
+    ('Double Deck', 'Double Deck'),
+    ('Double Bottom', 'Double Bottom'),
+    ('Heater', 'Heater'),
+    ('Pump', 'Pump'),
+    ('Clamp Shell', 'Clamp Shell'),
+    ('Flat Top', 'Flat Top'),
+    ('Chiller', 'Chiller'),
+    ('Anchor', 'Anchor'),
+    ('Anchor Winch', 'Anchor Winch');
+
+CREATE TABLE `ShipFacility` (
+  `shipId` int(11) unsigned NOT NULL,
+  `facilityId` int(11) unsigned NOT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastModified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`shipId`, `facilityId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `Cargo` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `contractId` int(11) unsigned DEFAULT NULL,

@@ -1,8 +1,10 @@
 package com.freight.view;
 
+import com.freight.model.ShipFacility;
 import com.freight.model.Shipment;
 
 import java.time.Instant;
+import java.util.List;
 
 
 /**
@@ -11,9 +13,12 @@ import java.time.Instant;
 public class ShipmentView {
 
     private final Shipment shipment;
+    private final List<ShipFacility> shipFacilities;
 
-    public ShipmentView(final Shipment shipment) {
+    public ShipmentView(final Shipment shipment,
+                        final List<ShipFacility> shipFacilities) {
         this.shipment = shipment;
+        this.shipFacilities = shipFacilities;
     }
 
     public int getId() {
@@ -21,7 +26,7 @@ public class ShipmentView {
     }
 
     public ShipView getShip() {
-        return new ShipView(shipment.getShip());
+        return new ShipView(shipment.getShip(), shipFacilities);
     }
 
     public LocationView getOrigin() {

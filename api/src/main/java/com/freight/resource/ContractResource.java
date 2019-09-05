@@ -6,17 +6,19 @@ import com.freight.dao.CargoContractDao;
 import com.freight.dao.CargoDao;
 import com.freight.dao.ContractDao;
 import com.freight.dao.SessionProvider;
+import com.freight.dao.ShipFacilityDao;
 import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
 import com.freight.model.Cargo;
 import com.freight.model.CargoContract;
 import com.freight.model.Contract;
+import com.freight.model.ShipFacility;
 import com.freight.model.Type;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.ContractRequestBody;
-import com.freight.response.ContractListResponse;
 import com.freight.response.CargoContractResponse;
+import com.freight.response.ContractListResponse;
 import com.freight.view.CargoContractView;
 import com.freight.view.ContractView;
 import io.swagger.annotations.Api;
@@ -52,6 +54,8 @@ import static com.freight.model.CargoContract.Status.CUSTOMER_NEGOTIATE;
 import static com.freight.model.CargoContract.Status.TRANSPORTER_EXPIRED;
 import static com.freight.model.CargoContract.Status.TRANSPORTER_OFFERED;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -72,7 +76,7 @@ public class ContractResource {
     private Provider<UserScope> userScopeProvider;
 
     @GET
-    @ApiOperation(value = "Get list of contract by cargoId")
+    @ApiOperation(value = "Get list of contract by cargo id")
     @Produces(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
     public ContractListResponse getContractsByCargoId(@QueryParam("cargoId") final int cargoId,
@@ -82,6 +86,7 @@ public class ContractResource {
             final CargoDao cargoDao = daoProvider.getDaoFactory().getCargoDao(sessionProvider);
             final CargoContractDao cargoContractDao = daoProvider.getDaoFactory().getCargoContractDao(sessionProvider);
             final ContractDao contractDao = daoProvider.getDaoFactory().getContractDao(sessionProvider);
+            final ShipFacilityDao shipFacilityDao = daoProvider.getDaoFactory().getShipFacilityDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
 
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
@@ -98,8 +103,16 @@ public class ContractResource {
                     .collect(toMap(CargoContract::getContractId, Function.identity()));
             final List<Integer> contractIds = cargoContracts.stream().map(CargoContract::getContractId).collect(toList());
             final List<Contract> contracts = contractDao.getByIds(contractIds);
+            final List<Integer> shipIds = contracts.stream().map(contract -> contract.getShip().getId()).collect(toList());
+            final List<ShipFacility> shipFacilities = shipFacilityDao.getByShipIds(shipIds);
+            final Map<Integer, List<ShipFacility>> shipFacilitiesByShipId = shipFacilities.stream().collect(groupingBy(ShipFacility::getShipId));
             final List<ContractView> contractViews = contracts.stream()
-                    .map(contract -> new ContractView(contract, cargoContractsByContractId.get(contract.getId())))
+                    .map(contract -> new ContractView(
+                            contract,
+                            cargoContractsByContractId.get(contract.getId()),
+                            shipFacilitiesByShipId.containsKey(contract.getShip().getId())
+                                    ? shipFacilitiesByShipId.get(contract.getShip().getId())
+                                    : emptyList()))
                     .collect(toList());
 
             return new ContractListResponse(contractViews);

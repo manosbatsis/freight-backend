@@ -1,6 +1,11 @@
 package com.freight.view;
 
 import com.freight.model.Ship;
+import com.freight.model.ShipFacility;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -9,9 +14,12 @@ import com.freight.model.Ship;
 public class ShipView {
 
     private final Ship ship;
+    private final List<ShipFacility> shipFacilities;
 
-    public ShipView(final Ship ship) {
+    public ShipView(final Ship ship,
+                    final List<ShipFacility> shipFacilities) {
         this.ship = ship;
+        this.shipFacilities = shipFacilities;
     }
 
     public int getId() {
@@ -40,5 +48,9 @@ public class ShipView {
 
     public ShipTypeView getType() {
         return new ShipTypeView(ship.getShipType());
+    }
+
+    public List<ShipFacilityView> getShipFacilities() {
+        return shipFacilities.stream().map(ShipFacilityView::new).collect(toList());
     }
 }
