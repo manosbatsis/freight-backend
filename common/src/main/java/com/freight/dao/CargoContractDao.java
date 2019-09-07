@@ -13,6 +13,7 @@ import java.util.Optional;
 import static com.freight.dao.BaseDao.Sort.DESC;
 import static com.freight.exception.BadRequest.STATUS_NOT_EXIST;
 import static com.freight.util.AssertUtil.assertNotNull;
+import static java.util.Collections.emptyList;
 
 /**
  * Created by toshikijahja on 6/7/17.
@@ -24,19 +25,25 @@ public class CargoContractDao extends BaseDao<CargoContract> {
         super(sessionProvider, CargoContract.class);
     }
 
-    public Optional<CargoContract> getByCargoIdOptional(final int cargoId) {
-        final List<CargoContract> results = getByCargoIdSortedAndPaginated(cargoId, 0, 1);
-        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    public List<CargoContract> getByCargoIdsAndStatus(final List<Integer> cargoIds,
+                                                      final CargoContract.Status status) {
+        if (cargoIds.isEmpty()) {
+            return emptyList();
+        }
+        final Map<String, Object> inputParam = new HashMap<>();
+        inputParam.put("cargoIds", cargoIds);
+        inputParam.put("status", status);
+        return getByFields("status = :status AND cargoId IN :cargoIds", inputParam);
     }
 
     public List<CargoContract> getByCargoIdSortedAndPaginated(final int cargoId,
-                                                              final int start,
-                                                              final int limit) {
+                                                               final int start,
+                                                               final int limit) {
 
         final Map<String, Object> inputParam = new HashMap<>();
         inputParam.put("cargoId", cargoId);
 
-        return getByFieldSortedAndPaginated("cargoId =: cargoId", inputParam, "contractId", DESC, start, limit);
+        return getByFieldSortedAndPaginated("cargoId = :cargoId", inputParam, "contractId", DESC, start, limit);
     }
 
     public Optional<CargoContract> getByContractId(final int contractId) {
