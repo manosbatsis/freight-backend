@@ -3,6 +3,7 @@ package com.freight.resource;
 import com.freight.auth.UserAuth;
 import com.freight.auth.UserScope;
 import com.freight.dao.BulkTypeDao;
+import com.freight.dao.CargoContractDao;
 import com.freight.dao.CargoDao;
 import com.freight.dao.CargoTypeDao;
 import com.freight.dao.ContainerTypeDao;
@@ -12,6 +13,7 @@ import com.freight.dao.UserDao;
 import com.freight.exception.FreightException;
 import com.freight.model.BulkType;
 import com.freight.model.Cargo;
+import com.freight.model.CargoContract;
 import com.freight.model.CargoType;
 import com.freight.model.ContainerType;
 import com.freight.model.Location;
@@ -19,8 +21,9 @@ import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.request_body.CargoRequestBody;
 import com.freight.request_body.LocationRequestBody;
-import com.freight.response.CargoListResponse;
+import com.freight.response.CargoExtendedListResponse;
 import com.freight.response.CargoResponse;
+import com.freight.view.CargoExtendedView;
 import com.freight.view.CargoView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +42,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -57,6 +61,8 @@ import static com.freight.exception.BadRequest.VOLUME_EMPTY;
 import static com.freight.exception.BadRequest.WEIGHT_EMPTY;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"user"})
@@ -83,14 +89,15 @@ public class CargoResource {
 //    }
 
     @GET
-    @ApiOperation(value = "Get list of cargo by status")
+    @ApiOperation(value = "Get list of cargo (with action count) by status")
     @Produces(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
-    public CargoListResponse getCargoByStatus(@DefaultValue("inquiry") @QueryParam("status") final String statusList,
-                                              @DefaultValue("0") @QueryParam("start") final int start,
-                                              @DefaultValue("20") @QueryParam("limit") final int limit) {
+    public CargoExtendedListResponse getCargoByStatus(@DefaultValue("inquiry") @QueryParam("status") final String statusList,
+                                                      @DefaultValue("0") @QueryParam("start") final int start,
+                                                      @DefaultValue("20") @QueryParam("limit") final int limit) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final CargoDao cargoDao = daoProvider.getDaoFactory().getCargoDao(sessionProvider);
+            final CargoContractDao cargoContractDao = daoProvider.getDaoFactory().getCargoContractDao(sessionProvider);
             final UserDao userDao = daoProvider.getDaoFactory().getUserDao(sessionProvider);
 
             final User user = userDao.getByGuid(userScopeProvider.get().getGuid())
@@ -100,9 +107,21 @@ public class CargoResource {
             final List<Cargo.Status> cargoStatusList = statusListString.stream()
                     .map(Cargo.Status::getStatus)
                     .collect(toList());
-            final List<Cargo> cargos = cargoDao.getByUserIdAndStatusListSortedAndPaginated(user.getId(), cargoStatusList, start, limit);
+            final List<Cargo> cargos = cargoDao.getByUserIdAndStatusListSortedAndPaginated(
+                    user.getId(), cargoStatusList, start, limit);
+            final List<Integer> cargoIds = cargos.stream().map(Cargo::getId).collect(toList());
 
-            return new CargoListResponse(cargos.stream().map(CargoView::new).collect(toList()));
+            // Query action (TRANSPORTER_OFFERED) count for each cargo
+            final List<CargoContract> actionCargoContracts = cargoContractDao.getByCargoIdsAndStatus(
+                    cargoIds, CargoContract.Status.TRANSPORTER_OFFERED);
+            final Map<Integer, Long> cargoIdToActionCount = actionCargoContracts.stream()
+                    .collect(groupingBy(CargoContract::getCargoId, counting()));
+
+            return new CargoExtendedListResponse(cargos.stream()
+                    .map(cargo -> new CargoExtendedView(
+                            cargo,
+                            cargoIdToActionCount.containsKey(cargo.getId()) ? cargoIdToActionCount.get(cargo.getId()) : 0L))
+                    .collect(toList()));
         }
     }
 
