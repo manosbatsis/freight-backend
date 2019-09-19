@@ -37,8 +37,8 @@ public class CargoContractDao extends BaseDao<CargoContract> {
     }
 
     public List<CargoContract> getByCargoIdSortedAndPaginated(final int cargoId,
-                                                               final int start,
-                                                               final int limit) {
+                                                              final int start,
+                                                              final int limit) {
 
         final Map<String, Object> inputParam = new HashMap<>();
         inputParam.put("cargoId", cargoId);

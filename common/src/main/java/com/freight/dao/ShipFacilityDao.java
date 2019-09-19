@@ -50,6 +50,9 @@ public class ShipFacilityDao extends BaseDao<ShipFacility> {
     }
 
     public List<ShipFacility> getByShipIds(final List<Integer> shipIds) {
+        if (shipIds.isEmpty()) {
+            return emptyList();
+        }
         final Map<String, Object> inputParams = new HashMap<>();
         inputParams.put("shipIds", shipIds);
         return getByFields("shipId IN :shipIds", inputParams);
