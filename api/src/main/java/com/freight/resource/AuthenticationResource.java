@@ -86,7 +86,7 @@ public class AuthenticationResource {
 
             // TODO: send verification code to email or phone
 
-            return new AccessTokenResponse(accessToken);
+            return new AccessTokenResponse(accessToken, user.getType());
         }
     }
 
@@ -130,12 +130,18 @@ public class AuthenticationResource {
     public AccessTokenResponse signIn(final AuthenticationRequestBody authenticationRequestBody) throws Exception {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
             final AuthenticationDao authenticationDao = daoProvider.getDaoFactory().getAuthenticationDao(sessionProvider);
-            final String accessToken = authenticationDao.authenticate(
+            final Authentication authentication = authenticationDao.authenticate(
                     authenticationRequestBody.getEmailOptional(),
                     authenticationRequestBody.getPhoneOptional(),
                     authenticationRequestBody.getPassword());
+            final String accessToken = createJWT(
+                    null,
+                    authentication.getGuid(),
+                    authentication.getType(),
+                    UNVERIFIED,
+                    authentication.getToken());
 
-            return new AccessTokenResponse(accessToken);
+            return new AccessTokenResponse(accessToken, authentication.getType());
         }
     }
 
@@ -166,7 +172,7 @@ public class AuthenticationResource {
 
             final String accessToken = createJWT(null, authentication.getGuid(),
                     authentication.getType(), VERIFIED, authentication.getToken());
-            return new AccessTokenResponse(accessToken);
+            return new AccessTokenResponse(accessToken, authentication.getType());
         }
     }
 }
