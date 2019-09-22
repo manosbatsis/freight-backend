@@ -103,11 +103,11 @@ public class AuthenticationDao extends BaseDao<Authentication> {
      * @param emailOptional can be empty
      * @param phoneOptional can be empty
      * @param password
-     * @return accessToken
+     * @return authentication object
      */
-    public String authenticate(final Optional<String> emailOptional,
-                               final Optional<Long> phoneOptional,
-                               final String password) {
+    public Authentication authenticate(final Optional<String> emailOptional,
+                                       final Optional<Long> phoneOptional,
+                                       final String password) {
         final Optional<Authentication> authenticationOptional;
         if (emailOptional.isPresent()) {
             authenticationOptional = getByEmail(emailOptional.get());
@@ -127,12 +127,7 @@ public class AuthenticationDao extends BaseDao<Authentication> {
             throw new FreightException(UNAUTHORIZED);
         }
 
-        return createJWT(
-                null,
-                authenticationOptional.get().getGuid(),
-                authenticationOptional.get().getType(),
-                UNVERIFIED,
-                authenticationOptional.get().getToken());
+        return authenticationOptional.get();
     }
 
     public Authentication verifyCode(final String guid, final String verificationCode) {
