@@ -5,9 +5,9 @@
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         
-        <!--<property name="hibernate.connection.url">jdbc:mysql://bqmayq5x95g1sgr9.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/a5x1k8x693t0vl11?serverTimezone=UTC</property>-->
-        <!--<property name="hibernate.connection.username">freight-jersey</property>-->
-        <!--<property name="hibernate.connection.password">***</property>-->
+        <!--<property name="hibernate.connection.url">jdbc:mysql://aa1qf3hqqr8ybtr.c1ifh4dt4i4u.ap-southeast-1.rds.amazonaws.com:3306/freight?serverTimezone=UTC</property>-->
+        <!--<property name="hibernate.connection.username">freightjersey</property>-->
+        <!--<property name="hibernate.connection.password">nullpointerexception</property>-->
 
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/freight?serverTimezone=UTC</property>
         <property name="hibernate.connection.username">root</property>
