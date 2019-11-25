@@ -1,5 +1,6 @@
 package com.freight.resource;
 
+import com.freight.dao.BaseDao;
 import com.freight.dao.BulkTypeDao;
 import com.freight.dao.CargoTypeDao;
 import com.freight.dao.ContainerTypeDao;
@@ -45,7 +46,7 @@ public class ConfigResource {
             final List<CargoType> cargoTypes = cargoTypeDao.getAll();
             final List<CargoTypeView> cargoTypeViews = cargoTypes.stream().map(CargoTypeView::new).collect(toList());
 
-            final List<BulkType> bulkTypes = bulkTypeDao.getAll();
+            final List<BulkType> bulkTypes = bulkTypeDao.getAllSorted("displayName", BaseDao.Sort.ASC);
             final List<BulkTypeView> bulkTypeViews = bulkTypes.stream().map(BulkTypeView::new).collect(toList());
 
             final List<ContainerType> containerTypes = containerTypeDao.getAll();

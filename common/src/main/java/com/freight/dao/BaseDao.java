@@ -42,6 +42,13 @@ public class BaseDao<T> {
     }
 
     @SuppressWarnings("unchecked")
+    public List<T> getAllSorted(final String sortField, final Sort sort) {
+        final Query query = getSessionProvider().getSession().createQuery(
+                "FROM " + clazz.getName() + " ORDER BY " + sortField + " " + sort);
+        return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
     public T getById(final int id) {
         return (T) getSessionProvider().getSession().load(clazz, id);
     }

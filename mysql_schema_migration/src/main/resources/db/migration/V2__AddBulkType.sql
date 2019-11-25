@@ -1,5 +1,6 @@
 INSERT INTO `BulkType` (`displayName`, `type`)
 VALUES
+('Coal', 'COAL'),
 ('Aluminium', 'ALUMINIUM'),
 ('Construction Sand', 'CONSTRUCTION_SAND'),
 ('Quartz Sand', 'QUARTZ_SAND'),
