@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.freight.dao.BaseDao.Sort.ASC;
 import static com.freight.dao.BaseDao.Sort.DESC;
 import static com.freight.exception.BadRequest.STATUS_NOT_EXIST;
 import static com.freight.util.AssertUtil.assertNotNull;
@@ -73,9 +74,9 @@ public class CargoDao extends BaseDao<Cargo> {
     }
 
     public List<Cargo> getByUserIdAndStatusListSortedAndPaginated(final int userId,
-                                                                  final List<Cargo.Status> statusList,
-                                                                  final int start,
-                                                                  final int limit) {
+                                                                       final List<Cargo.Status> statusList,
+                                                                       final int start,
+                                                                       final int limit) {
         requireNonNull(statusList);
         if (isEmpty(statusList)) {
             return emptyList();
@@ -86,6 +87,20 @@ public class CargoDao extends BaseDao<Cargo> {
         inputParam.put("status", statusList);
 
         return getByFieldSortedAndPaginated("userId = :userId AND status IN :status", inputParam, "id", DESC, start, limit);
+    }
+
+    public List<Cargo> getByStatusListSortedAndPaginated(final List<Cargo.Status> statusList,
+                                                         final int start,
+                                                         final int limit) {
+        requireNonNull(statusList);
+        if (isEmpty(statusList)) {
+            return emptyList();
+        }
+
+        final Map<String, Object> inputParam = new HashMap<>();
+        inputParam.put("status", statusList);
+
+        return getByFieldSortedAndPaginated("status IN :status", inputParam, "departure", ASC, start, limit);
     }
 
     public void updateCargoStatusShipmentIdAndContractId(final int cargoId,

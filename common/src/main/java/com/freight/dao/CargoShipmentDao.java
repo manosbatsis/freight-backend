@@ -24,10 +24,10 @@ public class CargoShipmentDao extends BaseDao<CargoShipment> {
         super(sessionProvider, CargoShipment.class);
     }
 
-    public List<CargoShipment> getByUserIdAndShipmentStatusListSortedAndPaginated(final int userId,
-                                                                                  final List<Shipment.Status> statusList,
-                                                                                  final int start,
-                                                                                  final int limit) {
+    public List<CargoShipment> getByCargosUserIdAndShipmentStatusListSortedAndPaginated(final int userId,
+                                                                                        final List<Shipment.Status> statusList,
+                                                                                        final int start,
+                                                                                        final int limit) {
         requireNonNull(statusList);
         if (isEmpty(statusList)) {
             return emptyList();
@@ -38,5 +38,22 @@ public class CargoShipmentDao extends BaseDao<CargoShipment> {
         inputParam.put("status", statusList);
 
         return getByFieldSortedAndPaginated("cargo.userId = :userId AND shipment.status IN :status", inputParam, "shipment.id", DESC, start, limit);
+    }
+
+    public List<CargoShipment> getByShipsCompanyIdAndShipmentStatusListSortedAndPaginated(final Integer companyId,
+                                                                                          final List<Shipment.Status> statusList,
+                                                                                          final int start,
+                                                                                          final int limit) {
+        requireNonNull(companyId);
+        requireNonNull(statusList);
+        if (isEmpty(statusList)) {
+            return emptyList();
+        }
+
+        final Map<String, Object> inputParam = new HashMap<>();
+        inputParam.put("companyId", companyId);
+        inputParam.put("status", statusList);
+
+        return getByFieldSortedAndPaginated("shipment.ship.company.id = :companyId AND shipment.status IN :status", inputParam, "shipment.id", DESC, start, limit);
     }
 }
