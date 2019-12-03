@@ -10,6 +10,7 @@ import com.freight.exception.FreightException;
 import com.freight.model.CargoShipment;
 import com.freight.model.ShipFacility;
 import com.freight.model.Shipment;
+import com.freight.model.Type;
 import com.freight.model.User;
 import com.freight.persistence.DaoProvider;
 import com.freight.response.CargoShipmentListResponse;
@@ -28,9 +29,12 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 
+import static com.freight.exception.BadRequest.COMPANY_NOT_EXIST;
+import static com.freight.exception.BadRequest.TYPE_NOT_EXIST;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -65,8 +69,21 @@ public class ShipmentResource {
                     .map(Shipment.Status::getStatus)
                     .collect(toList());
 
-            final List<CargoShipment> cargoShipments = cargoShipmentDao.getByUserIdAndShipmentStatusListSortedAndPaginated(
-                    user.getId(), shipmentStatusList, start, limit);
+            final List<CargoShipment> cargoShipments;
+            if (user.getType() == Type.CUSTOMER) {
+                cargoShipments = cargoShipmentDao.getByCargosUserIdAndShipmentStatusListSortedAndPaginated(
+                        user.getId(), shipmentStatusList, start, limit);
+            } else if (user.getType() == Type.TRANSPORTER) {
+                if (isNull(user.getCompanyId())) {
+                    throw new FreightException(COMPANY_NOT_EXIST);
+                }
+                cargoShipments = cargoShipmentDao.getByShipsCompanyIdAndShipmentStatusListSortedAndPaginated(
+                        user.getCompanyId(), shipmentStatusList, start, limit);
+            } else {
+                throw new FreightException(TYPE_NOT_EXIST);
+            }
+
+
 
             final List<Integer> shipIds = cargoShipments.stream()
                     .map(cargoShipment -> cargoShipment.getShipment().getShip().getId())

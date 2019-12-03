@@ -22,6 +22,7 @@ import com.freight.persistence.DaoProvider;
 import com.freight.request_body.CargoRequestBody;
 import com.freight.request_body.LocationRequestBody;
 import com.freight.response.CargoExtendedListResponse;
+import com.freight.response.CargoListResponse;
 import com.freight.response.CargoResponse;
 import com.freight.view.CargoExtendedView;
 import com.freight.view.CargoView;
@@ -59,8 +60,10 @@ import static com.freight.exception.BadRequest.ORIGIN_EMPTY;
 import static com.freight.exception.BadRequest.USER_NOT_EXIST;
 import static com.freight.exception.BadRequest.VOLUME_EMPTY;
 import static com.freight.exception.BadRequest.WEIGHT_EMPTY;
+import static com.freight.model.Cargo.Status.INQUIRY;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -87,6 +90,22 @@ public class CargoResource {
 //            return new ShipmentListResponse(shipments.stream().map(ShipmentView::new).collect(toList()));
 //        }
 //    }
+
+
+    @GET
+    @ApiOperation(value = "Get list of cargo")
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    @UserAuth(optional = false)
+    public CargoListResponse getCargoByField(@DefaultValue("0") @QueryParam("start") final int start,
+                                             @DefaultValue("20") @QueryParam("limit") final int limit) {
+        try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
+            final CargoDao cargoDao = daoProvider.getDaoFactory().getCargoDao(sessionProvider);
+            final List<Cargo> cargos = cargoDao.getByStatusListSortedAndPaginated(
+                    singletonList(INQUIRY), start, limit);
+            return new CargoListResponse(cargos.stream().map(CargoView::new).collect(toList()));
+        }
+    }
 
     @GET
     @ApiOperation(value = "Get list of cargo (with action count) by status")

@@ -29,6 +29,10 @@ public class CargoShipmentView {
     }
 
     public ShipmentView getShipment() {
-        return new ShipmentView(shipment, shipFacilities);
+        return new ShipmentView(shipment);
+    }
+
+    public ShipView getShip() {
+        return new ShipView(shipment.getShip(), shipFacilities);
     }
 }
