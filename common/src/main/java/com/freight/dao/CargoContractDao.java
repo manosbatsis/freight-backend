@@ -14,6 +14,8 @@ import static com.freight.dao.BaseDao.Sort.DESC;
 import static com.freight.exception.BadRequest.STATUS_NOT_EXIST;
 import static com.freight.util.AssertUtil.assertNotNull;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * Created by toshikijahja on 6/7/17.
@@ -36,14 +38,20 @@ public class CargoContractDao extends BaseDao<CargoContract> {
         return getByFields("status = :status AND cargoId IN :cargoIds", inputParam);
     }
 
-    public List<CargoContract> getByCargoIdSortedAndPaginated(final int cargoId,
-                                                              final int start,
-                                                              final int limit) {
+    public List<CargoContract> getByCargoIdAndStatusSortedAndPaginated(final int cargoId,
+                                                                       final List<CargoContract.Status> statusList,
+                                                                       final int start,
+                                                                       final int limit) {
+        requireNonNull(statusList);
+        if (isEmpty(statusList)) {
+            return emptyList();
+        }
 
         final Map<String, Object> inputParam = new HashMap<>();
         inputParam.put("cargoId", cargoId);
+        inputParam.put("status", statusList);
 
-        return getByFieldSortedAndPaginated("cargoId = :cargoId", inputParam, "contractId", DESC, start, limit);
+        return getByFieldSortedAndPaginated("cargoId = :cargoId AND status IN :status" , inputParam, "contractId", DESC, start, limit);
     }
 
     public Optional<CargoContract> getByContractId(final int contractId) {

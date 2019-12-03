@@ -1,5 +1,6 @@
 package com.freight.model;
 
+import com.freight.exception.FreightException;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -15,6 +16,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.Instant;
+
+import static com.freight.exception.BadRequest.STATUS_NOT_EXIST;
 
 /**
  * Created by toshikijahja on 3/26/19.
@@ -60,7 +63,16 @@ public class CargoContract {
         CUSTOMER_NEGOTIATE,
         CUSTOMER_EXPIRED,
         TRANSPORTER_EXPIRED,
-        CUSTOMER_ACCEPT_OTHER_CONTRACT,
+        CUSTOMER_ACCEPT_OTHER_CONTRACT;
+
+        public static Status getStatus(final String statusInString) {
+            for (final Status status : Status.values()) {
+                if (status.name().equalsIgnoreCase(statusInString)) {
+                    return status;
+                }
+            }
+            throw new FreightException(STATUS_NOT_EXIST);
+        }
     }
 
     public CargoContract() {}

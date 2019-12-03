@@ -60,6 +60,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Api(tags = {"user"})
 @Path("/contract")
@@ -82,6 +83,7 @@ public class ContractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UserAuth(optional = false)
     public ContractListResponse getContractsByCargoId(@QueryParam("cargoId") final int cargoId,
+                                                      @DefaultValue("") @QueryParam("status") final String statusList,
                                                       @DefaultValue("0") @QueryParam("start") final int start,
                                                       @DefaultValue("20") @QueryParam("limit") final int limit) {
         try (final SessionProvider sessionProvider = daoProvider.getSessionProvider()) {
@@ -100,7 +102,12 @@ public class ContractResource {
                 throw new FreightException(UNAUTHORIZED);
             }
 
-            final List<CargoContract> cargoContracts = cargoContractDao.getByCargoIdSortedAndPaginated(cargoId, start, limit);
+            final List<String> statusListString = asList(statusList.split(","));
+            final List<CargoContract.Status> contractStatusList = isEmpty(statusList)
+                    ? asList(CargoContract.Status.values())
+                    : statusListString.stream().map(CargoContract.Status::getStatus).collect(toList());
+
+            final List<CargoContract> cargoContracts = cargoContractDao.getByCargoIdAndStatusSortedAndPaginated(cargoId, contractStatusList, start, limit);
             final Map<Integer, CargoContract> cargoContractsByContractId = cargoContracts.stream()
                     .collect(toMap(CargoContract::getContractId, Function.identity()));
             final List<Integer> contractIds = cargoContracts.stream().map(CargoContract::getContractId).collect(toList());
