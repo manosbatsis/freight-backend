@@ -20,7 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.Instant;
 
-import static com.freight.model.Ship.Status.ACTIVE;
+import static com.freight.model.Ship.Status.IDLE;
 
 /**
  * Created by toshikijahja on 3/26/19.
@@ -63,8 +63,13 @@ public class Ship {
     private Instant lastModified;
 
     public enum Status {
-        ACTIVE,
-        INACTIVE
+        OFFLINE,
+        IDLE,
+        DOCKING_ORIGIN,
+        LOADING,
+        AT_SEA,
+        DISCHARGE,
+        DOCKING_DESTINATION,
     }
 
     public Ship() {}
@@ -122,7 +127,7 @@ public class Ship {
         private ShipType shipType;
         private Integer yearBuilt;
         private Integer grossTonnage;
-        private Status status = ACTIVE;
+        private Status status = IDLE;
 
         public Builder id(final int id) {
             this.id = id;

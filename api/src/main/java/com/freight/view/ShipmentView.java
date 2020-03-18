@@ -39,8 +39,4 @@ public class ShipmentView {
     public Shipment.Status getStatus() {
         return shipment.getStatus();
     }
-
-    public Shipment.ShipStatus getShipStatus() {
-        return shipment.getShipStatus();
-    }
 }
