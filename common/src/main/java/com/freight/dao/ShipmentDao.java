@@ -15,7 +15,6 @@ import static com.freight.dao.BaseDao.Sort.DESC;
 import static com.freight.exception.BadRequest.DESTINATION_EMPTY;
 import static com.freight.exception.BadRequest.ORIGIN_EMPTY;
 import static com.freight.exception.BadRequest.SHIP_NOT_EXIST;
-import static com.freight.model.Shipment.ShipStatus.DOCKING_ORIGIN;
 import static com.freight.util.AssertUtil.assertNotNull;
 import static io.jsonwebtoken.lang.Collections.isEmpty;
 import static java.util.Collections.emptyList;
@@ -51,7 +50,6 @@ public class ShipmentDao extends BaseDao<Shipment> {
                 .departure(departure)
                 .arrival(arrival)
                 .status(Shipment.Status.UPCOMING)
-                .shipStatus(DOCKING_ORIGIN)
                 .build();
         getSessionProvider().getSession().persist(shipment);
         getSessionProvider().commitTransaction();

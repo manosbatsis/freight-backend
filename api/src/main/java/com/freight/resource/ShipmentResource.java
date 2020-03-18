@@ -84,7 +84,6 @@ public class ShipmentResource {
             }
 
 
-
             final List<Integer> shipIds = cargoShipments.stream()
                     .map(cargoShipment -> cargoShipment.getShipment().getShip().getId())
                     .collect(toList());

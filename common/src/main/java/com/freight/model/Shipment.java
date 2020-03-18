@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import java.time.Instant;
 
 import static com.freight.exception.BadRequest.SHIPMENT_STATUS_NOT_EXIST;
-import static com.freight.model.Shipment.ShipStatus.DOCKING_ORIGIN;
 
 /**
  * Created by toshikijahja on 11/7/18.
@@ -56,10 +55,6 @@ public class Shipment {
     private Status status;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private ShipStatus shipStatus;
-
-    @Column
     @CreationTimestamp
     private Instant created;
 
@@ -83,14 +78,6 @@ public class Shipment {
         }
     }
 
-    public enum ShipStatus {
-        DOCKING_ORIGIN,
-        LOADING,
-        AT_SEA,
-        DISCHARGE,
-        DOCKING_DESTINATION
-    }
-
     public Shipment() {}
 
     private Shipment(final Builder builder) {
@@ -101,7 +88,6 @@ public class Shipment {
         this.departure = builder.departure;
         this.arrival = builder.arrival;
         this.status = builder.status;
-        this.shipStatus = builder.shipStatus;
     }
 
     public int getId() {
@@ -132,10 +118,6 @@ public class Shipment {
         return status;
     }
 
-    public ShipStatus getShipStatus() {
-        return shipStatus;
-    }
-
     public Instant getCreated() {
         return created;
     }
@@ -152,7 +134,6 @@ public class Shipment {
         private Instant departure;
         private Instant arrival;
         private Status status = Status.UPCOMING;
-        private ShipStatus shipStatus = DOCKING_ORIGIN;
 
         public Builder id(final int id) {
             this.id = id;
@@ -189,11 +170,6 @@ public class Shipment {
             return this;
         }
 
-        public Builder shipStatus(final ShipStatus shipStatus) {
-            this.shipStatus = shipStatus;
-            return this;
-        }
-
         public Shipment build() {
             return new Shipment(this);
         }
@@ -209,7 +185,6 @@ public class Shipment {
                 .append(departure)
                 .append(arrival)
                 .append(status)
-                .append(shipStatus)
                 .append(created)
                 .append(lastModified)
                 .toHashCode();
@@ -234,7 +209,6 @@ public class Shipment {
                 .append(departure, that.departure)
                 .append(arrival, that.arrival)
                 .append(status, that.status)
-                .append(shipStatus, that.shipStatus)
                 .append(created, that.created)
                 .append(lastModified, that.lastModified)
                 .isEquals();
@@ -250,7 +224,6 @@ public class Shipment {
                 .append("departure", departure)
                 .append("arrival", arrival)
                 .append("status", status)
-                .append("shipStatus", shipStatus)
                 .append("created", created)
                 .append("lastModified", lastModified)
                 .toString();

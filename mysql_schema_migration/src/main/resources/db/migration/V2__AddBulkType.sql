@@ -73,11 +73,11 @@ VALUES
 
 INSERT INTO `Authentication` (`guid`, `email`, `phone`, `password`, `verificationCode`, `verificationExpiry`, `status`, `token`, `created`, `lastModified`)
 VALUES
-	('03b3dab9-3bde-4e3b-a1e8-4573aad4665b', 'toshikijahja@gmail.com', NULL, '$2a$12$3RejsWRN97Ow6PEBEwpId.ZoL8qYLWIMBLv8YL1VN64SB8OL268Za', '1846', '2019-07-08 02:45:17', 'VERIFIED', 'b86937ab-1a3d-4ff8-9b71-c994ca50bd73', '2019-07-08 01:45:17', '2019-07-07 18:46:58');
+	('03b3dab9-3bde-4e3b-a1e8-4573aad4665b', 'toshikijahja@gmail.com', 6281310123123, '$2a$12$3RejsWRN97Ow6PEBEwpId.ZoL8qYLWIMBLv8YL1VN64SB8OL268Za', '1846', '2019-07-08 02:45:17', 'VERIFIED', 'b86937ab-1a3d-4ff8-9b71-c994ca50bd73', '2019-07-08 01:45:17', '2019-07-07 18:46:58');
 
 INSERT INTO `User` (`id`, `guid`, `username`, `email`, `phone`, `companyId`, `type`, `status`, `created`, `lastModified`)
 VALUES
-	(2, '03b3dab5-3bd3-4e3b-a1e8-4573fad4665b', NULL, 'toshikijahja@gmail.com', NULL, 1, 'TRANSPORTER', 'ACTIVE', '2019-07-15 21:31:51', '2019-07-15 21:32:22');
+	(2, '03b3dab5-3bd3-4e3b-a1e8-4573fad4665b', NULL, 'toshikijahja@gmail.com', 6281310123123, 1, 'TRANSPORTER', 'ACTIVE', '2019-07-15 21:31:51', '2019-07-15 21:32:22');
 
 INSERT INTO `Company` (`id`, `name`, `type`, `status`, `created`, `lastModified`)
 VALUES
@@ -86,12 +86,12 @@ VALUES
 
 INSERT INTO `Ship` (`id`, `name`, `companyId`, `shipTypeId`, `yearBuilt`, `grossTonnage`, `status`, `created`, `lastModified`)
 VALUES
-	(1, 'Perahu Maju Mundur', 1, 2, 1935, 1000, 'ACTIVE', '2019-07-15 21:33:39', '2019-08-09 22:27:45'),
-	(2, 'Anchor Sea', 2, 1, 1927, 1500, 'ACTIVE', '2019-07-15 21:33:39', '2019-08-09 22:28:45'),
-	(3, 'Golden Liverpool', 2, 2, 1980, 15000, 'ACTIVE', '2019-07-15 21:33:39', '2019-08-09 22:35:08'),
-	(4, 'Ombak Pancasila', 1, 1, 1945, 8600, 'ACTIVE', '2019-07-15 21:33:39', '2019-08-09 22:38:31'),
-	(5, 'Batavia', 2, 2, 1999, 6500, 'ACTIVE', '2019-07-15 21:33:39', '2019-08-09 22:41:20'),
-	(6, 'Sunda Kelapa', 1, 1, 1955, 4000, 'ACTIVE', '2019-07-15 21:33:39', '2019-08-09 22:44:06');
+	(1, 'Perahu Maju Mundur', 1, 2, 1935, 1000, 'IDLE', '2019-07-15 21:33:39', '2019-08-09 22:27:45'),
+	(2, 'Anchor Sea', 2, 1, 1927, 1500, 'DOCKING_ORIGIN', '2019-07-15 21:33:39', '2019-08-09 22:28:45'),
+	(3, 'Golden Liverpool', 2, 2, 1980, 15000, 'LOADING', '2019-07-15 21:33:39', '2019-08-09 22:35:08'),
+	(4, 'Ombak Pancasila', 1, 1, 1945, 8600, 'AT_SEA', '2019-07-15 21:33:39', '2019-08-09 22:38:31'),
+	(5, 'Batavia', 2, 2, 1999, 6500, 'DOCKING_DESTINATION', '2019-07-15 21:33:39', '2019-08-09 22:41:20'),
+	(6, 'Sunda Kelapa', 1, 1, 1955, 4000, 'DISCHARGE', '2019-07-15 21:33:39', '2019-08-09 22:44:06');
 
 INSERT INTO `ShipCargoType` (`shipId`, `cargoTypeId`, `created`, `lastModified`)
 VALUES
@@ -159,14 +159,14 @@ VALUES
 	(12, 5, 5, 2, 5000.00, 'TON', 'RP', 1, 1, 2, '2019-06-15', '2019-06-25', 'LUMPSUM', 'FILO', 11, 'AS_ORDER', NULL, 'AS_ORDER', NULL, 'NONE', 'NONE', 1, 'CUSTOMER', NULL, 'NOT_USED', 2, 2, 4, 'DAY', 'NOT_USED', 'SHEX', '2019-07-15 21:33:27', '2019-08-09 22:44:55'),
 	(13, 6, 6, 2, 5000.00, 'M3', 'RP', 2, 1, 2, '2019-06-15', '2019-06-20', 'CHARTER', 'FILO', 11, 'OTHER_PARTY', 'PT. Makmur Sentosa', 'OTHER_PARTY', 'PT. Sehat Abadi Jaya', 'CUSTOMER', 'CUSTOMER', 2, 'CUSTOMER', 1.00, 'WEEK', NULL, NULL, 2, 'WEEK', 'DHALFD', 'SHEX', '2019-07-15 21:33:27', '2019-08-09 22:44:54');
 
-INSERT INTO `Shipment` (`id`, `shipId`, `originLocationId`, `destinationLocationId`, `departure`, `arrival`, `status`, `shipStatus`, `created`, `lastModified`)
+INSERT INTO `Shipment` (`id`, `shipId`, `originLocationId`, `destinationLocationId`, `departure`, `arrival`, `status`, `created`, `lastModified`)
 VALUES
-	(1, 1, 1, 2, '2019-08-15', '2019-08-21', 'UPCOMING', 'DOCKING_ORIGIN', '2019-08-09 22:23:37', '2019-08-09 22:23:56'),
-	(2, 2, 1, 2, '2019-07-01', '2019-07-29', 'LIVE', 'LOADING', '2019-08-09 22:23:37', '2019-08-09 22:32:18'),
-	(3, 3, 1, 2, '2019-07-10', '2019-07-15', 'LIVE', 'AT_SEA', '2019-08-09 22:23:37', '2019-08-09 22:35:26'),
-	(4, 4, 1, 2, '2019-07-01', '2019-07-06', 'LIVE', 'DISCHARGE', '2019-08-09 22:23:37', '2019-08-09 22:38:45'),
-	(5, 5, 1, 2, '2019-07-01', '2019-07-06', 'LIVE', 'DOCKING_DESTINATION', '2019-08-09 22:23:37', '2019-08-09 22:53:07'),
-	(6, 6, 1, 2, '2019-06-01', '2019-06-15', 'COMPLETED', 'DISCHARGE', '2019-08-09 22:23:37', '2019-08-09 22:44:23');
+	(1, 1, 1, 2, '2019-08-15', '2019-08-21', 'UPCOMING', '2019-08-09 22:23:37', '2019-08-09 22:23:56'),
+	(2, 2, 1, 2, '2019-07-01', '2019-07-29', 'LIVE', '2019-08-09 22:23:37', '2019-08-09 22:32:18'),
+	(3, 3, 1, 2, '2019-07-10', '2019-07-15', 'LIVE', '2019-08-09 22:23:37', '2019-08-09 22:35:26'),
+	(4, 4, 1, 2, '2019-07-01', '2019-07-06', 'LIVE', '2019-08-09 22:23:37', '2019-08-09 22:38:45'),
+	(5, 5, 1, 2, '2019-07-01', '2019-07-06', 'LIVE', '2019-08-09 22:23:37', '2019-08-09 22:53:07'),
+	(6, 6, 1, 2, '2019-06-01', '2019-06-15', 'COMPLETED', '2019-08-09 22:23:37', '2019-08-09 22:44:23');
 
 INSERT INTO `Payout` (`id`, `contractSigned`, `dockedOrigin`, `loaded`, `dockedDestination`, `discharged`, `created`, `lastModified`)
 VALUES
